@@ -12,7 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Spinner;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 
@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final ArrayList<String> PERMISSIONS = BluetoothHandler.getBluetoothPermissions();
 
     private BluetoothHandler bluetoothHandler;
-    private Spinner devicesSpinner;
+    private ListView devicesListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         this.bluetoothHandler = new BluetoothHandler(this);
         this.registerOnClickListenerCallBackForButtons();
-        this.initializeDevicesSpinner();
+        this.initializeDevicesdevicesListView();
         this.requestPermissions();
     }
 
@@ -110,7 +110,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 alert_dialog_no);
     }
 
-    private void initializeDevicesSpinner() {
-        this.devicesSpinner = findViewById(devices_spinner);
+    private void initializeDevicesdevicesListView() {
+        this.devicesListView = findViewById(devices_listview);
+        this.devicesListView.setAdapter(this.bluetoothHandler.bluetoothDevicesAdapter);
     }
 }

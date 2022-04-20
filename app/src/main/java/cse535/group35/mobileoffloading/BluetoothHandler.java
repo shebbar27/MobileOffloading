@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,10 +25,11 @@ public class BluetoothHandler {
 
     final private static int REQUEST_ENABLE_BT = 137;
 
-    final private AppCompatActivity activity;
-    final private BluetoothAdapter bluetoothAdapter;
-    final private DeviceDiscoveryResultsReceiver deviceDiscoveryResultsReceiver;
+    private final AppCompatActivity activity;
+    private final BluetoothAdapter bluetoothAdapter;
+    private final DeviceDiscoveryResultsReceiver deviceDiscoveryResultsReceiver;
     private final Set<BluetoothDevice> discoveredBluetoothDevices = new HashSet<>();
+    public ArrayAdapter<String> bluetoothDevicesAdapter;
 
     @SuppressLint("MissingPermission")
     public BluetoothHandler(AppCompatActivity activity) {
@@ -36,6 +38,7 @@ public class BluetoothHandler {
         this.deviceDiscoveryResultsReceiver = new DeviceDiscoveryResultsReceiver(this.activity,
                 this);
         this.registerDeviceDiscoveryResultsReceiver();
+        this.initializeBluetoothDevicesAdapter();
     }
 
     public static ArrayList<String> getBluetoothPermissions() {
@@ -64,15 +67,10 @@ public class BluetoothHandler {
         }
     }
 
+    @SuppressLint("MissingPermission")
     public void addDiscoveredBluetoothDevice(BluetoothDevice device) {
         this.discoveredBluetoothDevices.add(device);
-    }
-
-    @SuppressWarnings("MissingPermission")
-    public Set<BluetoothDevice> getAllBluetoothDevices() {
-        Set<BluetoothDevice> allBluetoothDevices = this.bluetoothAdapter.getBondedDevices();
-        allBluetoothDevices.addAll(this.discoveredBluetoothDevices);
-        return allBluetoothDevices;
+        this.updateBluetoothDevicesAdapter();
     }
 
     @SuppressWarnings("deprecation")
@@ -106,7 +104,7 @@ public class BluetoothHandler {
             this.bluetoothAdapter.cancelDiscovery();
         }
 
-        // Request for device discovery from BluetoothAdapter
+        this.discoveredBluetoothDevices.clear();
         this.bluetoothAdapter.startDiscovery();
     }
 
@@ -130,7 +128,34 @@ public class BluetoothHandler {
             bluetoothAdapter.cancelDiscovery();
         }
 
+        this.discoveredBluetoothDevices.clear();
         this.activity.unregisterReceiver(this.deviceDiscoveryResultsReceiver);
+    }
+
+    @SuppressLint("MissingPermission")
+    private void initializeBluetoothDevicesAdapter() {
+        Set<BluetoothDevice> pairedBluetoothDevices = this.bluetoothAdapter.getBondedDevices();
+        ArrayList<String> pairedBluetoothDeviceNames = new ArrayList<>();
+        for (BluetoothDevice device: pairedBluetoothDevices) {
+            pairedBluetoothDeviceNames.add(device.getName());
+        }
+
+        this.bluetoothDevicesAdapter = new ArrayAdapter<>(this.activity,
+                android.R.layout.simple_selectable_list_item,
+                pairedBluetoothDeviceNames);
+    }
+
+    @SuppressLint("MissingPermission")
+    private void updateBluetoothDevicesAdapter() {
+        Set<BluetoothDevice> allBluetoothDevices = this.bluetoothAdapter.getBondedDevices();
+        allBluetoothDevices.addAll(this.discoveredBluetoothDevices);
+        ArrayList<String> allBluetoothDeviceNames = new ArrayList<>();
+        for (BluetoothDevice device: allBluetoothDevices) {
+            allBluetoothDeviceNames.add(device.getName());
+        }
+
+        this.bluetoothDevicesAdapter.clear();
+        this.bluetoothDevicesAdapter.addAll(allBluetoothDeviceNames);
     }
 
     private void displayBluetoothEnabledAlert() {

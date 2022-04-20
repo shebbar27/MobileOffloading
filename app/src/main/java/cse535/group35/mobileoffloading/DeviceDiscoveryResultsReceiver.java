@@ -11,8 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class DeviceDiscoveryResultsReceiver extends BroadcastReceiver {
 
-    final private AppCompatActivity activity;
-    final private BluetoothHandler bluetoothHandler;
+    private final AppCompatActivity activity;
+    private final BluetoothHandler bluetoothHandler;
 
     public DeviceDiscoveryResultsReceiver(AppCompatActivity activity, BluetoothHandler bluetoothHandler) {
         this.activity = activity;
