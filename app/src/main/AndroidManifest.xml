@@ -3,20 +3,20 @@
     package="cse535.group35.mobileoffloading">
 
     <!-- Request legacy Bluetooth permissions on older devices. -->
-    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"  />
 
     <!-- Needed only if your app looks for Bluetooth devices.
          If your app doesn't use Bluetooth scan results to derive physical
          location information, you can strongly assert that your app
          doesn't derive physical location. -->
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:minSdkVersion="29"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:minSdkVersion="31"/>
 
     <!-- Needed only if your app makes the device discoverable to Bluetooth devices. -->
-    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" android:minSdkVersion="29"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" android:minSdkVersion="31"/>
 
     <!-- Needed only if your app communicates with already-paired Bluetooth devices. -->
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" android:minSdkVersion="29"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" android:minSdkVersion="31"/>
 
     <!-- Needed only if your app uses Bluetooth scan results to derive physical location. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -42,6 +42,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <receiver
+            android:name=".DeviceDiscoveryResultsReceiver"
+            android:exported="true">
+        </receiver>
     </application>
 
 </manifest>

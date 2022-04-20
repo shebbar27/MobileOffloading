@@ -35,8 +35,9 @@ public class BluetoothHandler {
     public BluetoothHandler(AppCompatActivity activity) {
         this.activity = activity;
         this.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        this.deviceDiscoveryResultsReceiver = new DeviceDiscoveryResultsReceiver(this.activity,
-                this);
+        this.deviceDiscoveryResultsReceiver = new DeviceDiscoveryResultsReceiver();
+        this.deviceDiscoveryResultsReceiver.setActivity(activity);
+        this.deviceDiscoveryResultsReceiver.setBluetoothHandler(this);
         this.registerDeviceDiscoveryResultsReceiver();
         this.initializeBluetoothDevicesAdapter();
     }
@@ -45,12 +46,9 @@ public class BluetoothHandler {
         final ArrayList<String> permissions = new ArrayList<String>() {{
                 add(Manifest.permission.ACCESS_COARSE_LOCATION);
                 add(Manifest.permission.ACCESS_FINE_LOCATION);
+                add(Manifest.permission.BLUETOOTH);
+                add(Manifest.permission.BLUETOOTH_ADMIN);
             }};
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            permissions.add(Manifest.permission.BLUETOOTH);
-            permissions.add(Manifest.permission.BLUETOOTH_ADMIN);
-        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             permissions.add(Manifest.permission.BLUETOOTH_SCAN);
@@ -105,11 +103,18 @@ public class BluetoothHandler {
         }
 
         this.discoveredBluetoothDevices.clear();
+        this.registerDeviceDiscoveryResultsReceiver();
         this.bluetoothAdapter.startDiscovery();
     }
 
+    @SuppressLint("MissingPermission")
     public void connectWithSelectedBluetoothDevices() {
         // TODO
+        if (!this.bluetoothAdapter.isDiscovering()) {
+            AppUtility.createAndDisplayToast(this.activity,
+                    "Device Discovery did not start",
+                    Toast.LENGTH_LONG);
+        }
     }
 
     public void checkForBluetoothEnabledAndDisplayAlert(int requestCode, int resultCode) {

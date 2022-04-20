@@ -11,11 +11,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class DeviceDiscoveryResultsReceiver extends BroadcastReceiver {
 
-    private final AppCompatActivity activity;
-    private final BluetoothHandler bluetoothHandler;
+    private AppCompatActivity activity;
+    private BluetoothHandler bluetoothHandler;
 
-    public DeviceDiscoveryResultsReceiver(AppCompatActivity activity, BluetoothHandler bluetoothHandler) {
+    public void setActivity(AppCompatActivity activity) {
         this.activity = activity;
+    }
+
+    public void setBluetoothHandler(BluetoothHandler bluetoothHandler) {
         this.bluetoothHandler = bluetoothHandler;
     }
 
@@ -25,7 +28,7 @@ public class DeviceDiscoveryResultsReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         if (BluetoothDevice.ACTION_FOUND.equals(action)) {
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            if (device != null && device.getBondState() != BluetoothDevice.BOND_BONDED) {
+            if (device != null) {
                 this.bluetoothHandler.addDiscoveredBluetoothDevice(device);
                 AppUtility.createAndDisplayToast(this.activity,
                         "Found Device: " + device.getName() + "\t" + device.getAddress()
