@@ -25,4 +25,7 @@
         Unfortunately the App has stopped working! Exiting the App!
     </string>
     <string name="empty_string" />
+    <string name="scan">Scan</string>
+    <string name="devices_discovered">Devices Discovered</string>
+    <string name="connect">Connect</string>
 </resources>

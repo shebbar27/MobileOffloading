@@ -1,6 +1,7 @@
 package cse535.group35.mobileoffloading;
 
 import static android.Manifest.*;
+import static cse535.group35.mobileoffloading.R.id.*;
 import static cse535.group35.mobileoffloading.R.string.*;
 
 import androidx.annotation.NonNull;
@@ -15,26 +16,35 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     final private static int REQUEST_PERMISSIONS_CODE = 27;
     final private static int REQUEST_ENABLE_BT = 137;
-
     private static final ArrayList<String> PERMISSIONS = new ArrayList<>(
             Arrays.asList(
                     permission.ACCESS_COARSE_LOCATION,
                     permission.ACCESS_FINE_LOCATION)
     );
-    private boolean isBluetoothEnabled = false;
+
+    private BluetoothAdapter bluetoothAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        AppUtility.registerButtonOnClickCallBack(this,
+                this,
+                new ArrayList<Integer>() {{
+                    add(scan_button);
+                    add(connect_button);
+                }}
+        );
 
         this.initialize();
         this.requestPermissions();
@@ -57,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == REQUEST_ENABLE_BT) {
             if(resultCode == Activity.RESULT_OK) {
-                this.isBluetoothEnabled = true;
                 this.displayBluetoothEnabledAlert();
             }
             else {
@@ -66,9 +75,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case scan_button:
+                this.scanForAvailableBluetoothDevices();
+                break;
+
+            case connect_button:
+                this.connectWithSelectedBluetoothDevices();
+                break;
+        }
+    }
+
     private void initialize() {
-        this.isBluetoothEnabled = false;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            PERMISSIONS.add(permission.BLUETOOTH);
+            PERMISSIONS.add(permission.BLUETOOTH_ADMIN);
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PERMISSIONS.add(permission.BLUETOOTH_SCAN);
+            PERMISSIONS.add(permission.BLUETOOTH_ADVERTISE);
             PERMISSIONS.add(permission.BLUETOOTH_CONNECT);
         }
     }
@@ -124,14 +152,14 @@ public class MainActivity extends AppCompatActivity {
     @SuppressWarnings("deprecation")
     private void enableBluetooth() {
         BluetoothManager bluetoothManager = getSystemService(BluetoothManager.class);
-        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+        this.bluetoothAdapter = bluetoothManager.getAdapter();
 
-        if (bluetoothAdapter == null) {
+        if (this.bluetoothAdapter == null) {
             this.displayBluetoothNotSupportedAlertAndExitApp();
             return;
         }
 
-        if (!bluetoothAdapter.isEnabled()) {
+        if (!this.bluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
                     ActivityCompat.checkSelfPermission(this, permission.BLUETOOTH_CONNECT)
@@ -142,5 +170,15 @@ public class MainActivity extends AppCompatActivity {
 
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
+    }
+
+    private void scanForAvailableBluetoothDevices(){
+        if(!this.bluetoothAdapter.isEnabled()) {
+            this.enableBluetooth();
+        }
+    }
+
+    private void connectWithSelectedBluetoothDevices() {
+        // TODO
     }
 }
