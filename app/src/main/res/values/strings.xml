@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">MobileOffloading</string>
-    <string name="exit">Exit</string>
     <string name="alert_dialog_ok">OK</string>
     <string name="alert_dialog_yes">Yes</string>
     <string name="alert_dialog_no">No</string>
+    <string name="exit_dialog_title">Exiting App!</string>
+    <string name="exit_dialog_message">Are you sure you want to exit?</string>
     <string name="bluetooth_permission_denied_alert_title">Bluetooth Permission Denied!</string>
     <string name="bluetooth_permission_denied_alert_message">
         App can not function without access to Bluetooth! Go to Settings and enable bluetooth access. Exiting the app!
@@ -24,4 +25,5 @@
     <string name="scan">Scan</string>
     <string name="devices_discovered">Devices Discovered</string>
     <string name="connect">Connect</string>
+    <string name="exit">Exit</string>
 </resources>

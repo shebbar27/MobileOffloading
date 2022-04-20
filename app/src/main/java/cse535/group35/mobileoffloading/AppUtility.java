@@ -15,15 +15,6 @@ import java.util.ArrayList;
 
 public class AppUtility {
 
-    public static void handleException(Exception e, AppCompatActivity activity) {
-        e.printStackTrace();
-        createExitAlertDialogWithConsentAndExit(
-                activity,
-                crash_dialog_title,
-                crash_dialog_message,
-                alert_dialog_ok);
-    }
-
     public static void createExitAlertDialogWithConsentAndExit(AppCompatActivity activity,
                                                                int titleId,
                                                                int messageId,
@@ -62,7 +53,7 @@ public class AppUtility {
         dialogBuilder.setTitle(activity.getString(titleId));
         dialogBuilder.setMessage(activity.getString(messageId));
         dialogBuilder.setPositiveButton(activity.getString(positiveButtonTextId), positiveButtonOnClickCallBack);
-        if(!activity.getString(negativeButtonTextId).isEmpty()) {
+        if(negativeButtonTextId != empty_string) {
             dialogBuilder.setNegativeButton(activity.getString(negativeButtonTextId), negativeButtonOnClickCallBack);
         }
 
