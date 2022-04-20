@@ -10,61 +10,60 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
 
 public class AppUtility {
+
     public static void handleException(Exception e, AppCompatActivity activity) {
         e.printStackTrace();
         createExitAlertDialogWithConsentAndExit(
                 activity,
-                activity.getString(crash_dialog_title),
-                activity.getString(crash_dialog_message),
-                activity.getString(alert_dialog_ok));
+                crash_dialog_title,
+                crash_dialog_message,
+                alert_dialog_ok);
     }
 
     public static void createExitAlertDialogWithConsentAndExit(AppCompatActivity activity,
-                                                               String title,
-                                                               String message,
-                                                               String positiveButtonText) {
+                                                               int titleId,
+                                                               int messageId,
+                                                               int positiveButtonTextId) {
         createAlertDialogAndShow(activity,
-                title,
-                message,
-                positiveButtonText,
+                titleId,
+                messageId,
+                positiveButtonTextId,
                 (dialog, which) -> exitApplication(activity),
-                activity.getString(empty_string),
+                empty_string,
                 (dialog, which) -> { });
     }
 
     public static void createExitAlertDialogWithConsentAndExit(AppCompatActivity activity,
-                                                               String title,
-                                                               String message,
-                                                               String positiveButtonText,
-                                                               String negativeButtonText) {
+                                                               int titleId,
+                                                               int messageId,
+                                                               int positiveButtonTextId,
+                                                               int negativeButtonTextId) {
         createAlertDialogAndShow(activity,
-                title,
-                message,
-                positiveButtonText,
+                titleId,
+                messageId,
+                positiveButtonTextId,
                 (dialog, which) -> exitApplication(activity),
-                negativeButtonText,
+                negativeButtonTextId,
                 (dialog, which) -> dialog.cancel());
     }
 
     public static void createAlertDialogAndShow(AppCompatActivity activity,
-                                                String title,
-                                                String message,
-                                                String positiveButtonText,
+                                                int titleId,
+                                                int messageId,
+                                                int positiveButtonTextId,
                                                 OnClickListener positiveButtonOnClickCallBack,
-                                                String negativeButtonText,
+                                                int negativeButtonTextId,
                                                 OnClickListener negativeButtonOnClickCallBack) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
-        dialogBuilder.setTitle(title);
-        dialogBuilder.setMessage(message);
-        dialogBuilder.setPositiveButton(positiveButtonText, positiveButtonOnClickCallBack);
-        if(!negativeButtonText.isEmpty()) {
-            dialogBuilder.setNegativeButton(negativeButtonText, negativeButtonOnClickCallBack);
+        dialogBuilder.setTitle(activity.getString(titleId));
+        dialogBuilder.setMessage(activity.getString(messageId));
+        dialogBuilder.setPositiveButton(activity.getString(positiveButtonTextId), positiveButtonOnClickCallBack);
+        if(!activity.getString(negativeButtonTextId).isEmpty()) {
+            dialogBuilder.setNegativeButton(activity.getString(negativeButtonTextId), negativeButtonOnClickCallBack);
         }
 
         AlertDialog dialog =  dialogBuilder.create();
@@ -100,9 +99,5 @@ public class AppUtility {
 
     public static void createAndDisplayToast(AppCompatActivity activity, String message) {
         createAndDisplayToast(activity, message, Toast.LENGTH_SHORT);
-    }
-
-    public static Executor getExecutor(AppCompatActivity activity) {
-        return ContextCompat.getMainExecutor(activity);
     }
 }

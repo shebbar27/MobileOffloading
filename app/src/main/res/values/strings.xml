@@ -6,15 +6,11 @@
     <string name="alert_dialog_no">No</string>
     <string name="bluetooth_permission_denied_alert_title">Bluetooth Permission Denied!</string>
     <string name="bluetooth_permission_denied_alert_message">
-        App can not function without access to Bluetooth! Go to Settings and Enable Bluetooth Access. Exiting the app!
+        App can not function without access to Bluetooth! Go to Settings and enable bluetooth access. Exiting the app!
     </string>
     <string name="bluetooth_not_supported_alert_title">Bluetooth Not Supported by Device!</string>
     <string name="bluetooth_not_supported_alert_message">
-        The device does not support Bluetooth! App can not function without Bluetooth. Exiting the app!
-    </string>
-    <string name="bluetooth_not_enabled_alert_title">Bluetooth Not Enabled on Device!</string>
-    <string name="bluetooth_not_enabled_alert_message">
-        Bluetooth not enabled on device! Please enable Bluetooth in settings and retry. Exiting the app!
+        The device does not support Bluetooth! App can not function without bluetooth. Exiting the app!
     </string>
     <string name="bluetooth_enabled_alert_title">Bluetooth Enabled on Device!</string>
     <string name="bluetooth_enabled_alert_message">
@@ -22,7 +18,7 @@
     </string>
     <string name="crash_dialog_title">Error</string>
     <string name="crash_dialog_message">
-        Unfortunately the App has stopped working! Exiting the App!
+        Unfortunately the app has stopped working! Exiting the App!
     </string>
     <string name="empty_string" />
     <string name="scan">Scan</string>
