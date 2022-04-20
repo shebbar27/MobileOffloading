@@ -22,7 +22,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final ArrayList<String> PERMISSIONS = BluetoothHandler.getBluetoothPermissions();
 
     private BluetoothHandler bluetoothHandler;
-    private ListView devicesListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         this.bluetoothHandler = new BluetoothHandler(this);
         this.registerOnClickListenerCallBackForButtons();
-        this.initializeDevicesdevicesListView();
+        this.initializeDevicesListView();
         this.requestPermissions();
     }
 
@@ -110,8 +109,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 alert_dialog_no);
     }
 
-    private void initializeDevicesdevicesListView() {
-        this.devicesListView = findViewById(devices_listview);
-        this.devicesListView.setAdapter(this.bluetoothHandler.bluetoothDevicesAdapter);
+    private void initializeDevicesListView() {
+        ListView devicesListView = findViewById(devices_listview);
+        devicesListView.setAdapter(this.bluetoothHandler.bluetoothDevicesAdapter);
     }
 }
