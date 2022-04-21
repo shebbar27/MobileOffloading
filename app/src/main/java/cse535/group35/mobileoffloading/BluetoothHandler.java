@@ -103,18 +103,12 @@ public class BluetoothHandler {
         }
 
         this.discoveredBluetoothDevices.clear();
-        this.registerDeviceDiscoveryResultsReceiver();
         this.bluetoothAdapter.startDiscovery();
     }
 
     @SuppressLint("MissingPermission")
     public void connectWithSelectedBluetoothDevices() {
         // TODO
-        if (!this.bluetoothAdapter.isDiscovering()) {
-            AppUtility.createAndDisplayToast(this.activity,
-                    "Device Discovery did not start",
-                    Toast.LENGTH_LONG);
-        }
     }
 
     public void checkForBluetoothEnabledAndDisplayAlert(int requestCode, int resultCode) {

@@ -15,6 +15,15 @@ import java.util.ArrayList;
 
 public class AppUtility {
 
+    public static void handleException(Exception e, AppCompatActivity activity) {
+        e.printStackTrace();
+        createExitAlertDialogWithConsentAndExit(
+                activity,
+                crash_dialog_title,
+                crash_dialog_message,
+                alert_dialog_ok);
+    }
+
     public static void createExitAlertDialogWithConsentAndExit(AppCompatActivity activity,
                                                                int titleId,
                                                                int messageId,
