@@ -29,6 +29,9 @@ import com.google.android.gms.nearby.connection.Strategy;
 
 import java.util.ArrayList;
 
+import cse535.group35.mobileoffloading.master.MasterConnectionLifecycleCallback;
+import cse535.group35.mobileoffloading.master.MasterEndpointDiscoveryCallback;
+
 public class MasterActivity extends AppCompatActivity implements View.OnClickListener {
     public ArrayAdapter<String> nearbyDevicesAdapter;
 
@@ -59,21 +62,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
             DiscoveryOptions discoveryOptions =
                     new DiscoveryOptions.Builder().setStrategy(Strategy.P2P_CLUSTER).build();
             Nearby.getConnectionsClient(getApplicationContext())
-                    .startDiscovery("OFFLOADINGSERVICE", new EndpointDiscoveryCallback() {
-                        @Override
-                        public void onEndpointFound(@NonNull String endPointId, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
-                            Log.d("A", "onEndpointFound: Found device"+ discoveredEndpointInfo.getEndpointName());
-                            Toast.makeText(getApplicationContext(), "Found Device: "+discoveredEndpointInfo.getEndpointName(), Toast.LENGTH_SHORT).show();
-                            nearbyDevicesAdapter.add(endPointId);
-
-                        }
-
-                        @Override
-                        public void onEndpointLost(@NonNull String s) {
-
-
-                        }
-                    }, discoveryOptions)
+                    .startDiscovery(getResources().getString(nearbyServiceId), new MasterEndpointDiscoveryCallback(getApplicationContext(),nearbyDevicesAdapter), discoveryOptions)
                     .addOnSuccessListener(
                             (Void unused) -> {
                                 // We're discovering!
@@ -104,39 +93,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                  String selected=(String)adapterView.getItemAtPosition(i);
                  Toast.makeText(MasterActivity.this, "Selected: " +selected, Toast.LENGTH_SHORT).show();
                 Nearby.getConnectionsClient(getApplicationContext())
-                        .requestConnection("MASTER", selected, new ConnectionLifecycleCallback() {
-                            @Override
-                            public void onConnectionInitiated(@NonNull String s, @NonNull ConnectionInfo connectionInfo) {
-                                Toast.makeText(MasterActivity.this, "Connection Initiated with "+s, Toast.LENGTH_SHORT).show();
-                                Nearby.getConnectionsClient(getApplicationContext()).acceptConnection(s, new PayloadCallback() {
-                                    @Override
-                                    public void onPayloadReceived(@NonNull String s, @NonNull Payload payload) {
-
-                                    }
-
-                                    @Override
-                                    public void onPayloadTransferUpdate(@NonNull String s, @NonNull PayloadTransferUpdate payloadTransferUpdate) {
-
-                                    }
-                                });
-
-                            }
-
-                            @Override
-                            public void onConnectionResult(@NonNull String s, @NonNull ConnectionResolution connectionResolution) {
-                                String inputString = "Hello World!";
-                                byte[] byteArrray = inputString.getBytes();
-                                Payload bytesPayload = Payload.fromBytes(byteArrray);
-                                Nearby.getConnectionsClient(getApplicationContext()).sendPayload(s, bytesPayload);
-                                Toast.makeText(MasterActivity.this, "Payload sent", Toast.LENGTH_SHORT).show();
-
-                            }
-
-                            @Override
-                            public void onDisconnected(@NonNull String s) {
-                                Toast.makeText(MasterActivity.this, "Disconnected", Toast.LENGTH_SHORT).show();
-                            }
-                        })
+                        .requestConnection("MASTER", selected, new MasterConnectionLifecycleCallback(getApplicationContext()))
                         .addOnSuccessListener(
                                 (Void unused) -> {
                                     // We successfully requested a connection. Now both sides

@@ -14,10 +14,13 @@ import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 
 import cse535.group35.mobileoffloading.MasterActivity;
+import cse535.group35.mobileoffloading.PayloadBuilder;
+import cse535.group35.mobileoffloading.RequestType;
 
 public class MasterConnectionLifecycleCallback extends ConnectionLifecycleCallback {
 
     private Context context;
+    private int count=0;
     public MasterConnectionLifecycleCallback(Context context){
         this.context=context;
     }
@@ -29,11 +32,13 @@ public class MasterConnectionLifecycleCallback extends ConnectionLifecycleCallba
 
     @Override
     public void onConnectionResult(@NonNull String s, @NonNull ConnectionResolution connectionResolution) {
-        String inputString = "Hello World!";
-        byte[] byteArrray = inputString.getBytes();
-        Payload bytesPayload = Payload.fromBytes(byteArrray);
-        Nearby.getConnectionsClient(context).sendPayload(s, bytesPayload);
-        Toast.makeText(context, "Payload sent", Toast.LENGTH_SHORT).show();
+        if(count==0){
+            Payload payload= Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.DEVICE_STATE).build());
+            Nearby.getConnectionsClient(context).sendPayload(s, payload);
+            Toast.makeText(context, "Payload sent", Toast.LENGTH_SHORT).show();
+            count++;
+        }
+
 
     }
 

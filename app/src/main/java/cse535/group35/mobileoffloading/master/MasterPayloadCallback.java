@@ -1,6 +1,7 @@
 package cse535.group35.mobileoffloading.master;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -17,7 +18,8 @@ public class MasterPayloadCallback extends PayloadCallback {
     }
     @Override
     public void onPayloadReceived(@NonNull String s, @NonNull Payload payload) {
-
+        String data = new String(payload.asBytes());
+        Toast.makeText(context, "Received message: "+data, Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -14,6 +14,11 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import cse535.group35.mobileoffloading.PayloadBuilder;
+import cse535.group35.mobileoffloading.RequestType;
 import cse535.group35.mobileoffloading.SlaveActivity;
 
 public class SlaveConnectionLifecycleCallback extends ConnectionLifecycleCallback {
@@ -30,7 +35,9 @@ public class SlaveConnectionLifecycleCallback extends ConnectionLifecycleCallbac
 
     @Override
     public void onConnectionResult(@NonNull String s, @NonNull ConnectionResolution connectionResolution) {
-        Toast.makeText(context, "Connection Established", Toast.LENGTH_SHORT).show();
+
+
+
     }
 
     @Override
