@@ -31,4 +31,5 @@
     <string name="mode">Mode</string>
     <string name="slave">Slave</string>
     <string name="master">Master</string>
+    <string name="nearbyServiceId">OffloadingService</string>
 </resources>
