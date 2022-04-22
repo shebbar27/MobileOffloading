@@ -3,9 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="cse535.group35.mobileoffloading">
 
-
-
-
     <!-- Required for Nearby Connections -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -13,16 +10,16 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <!-- Only required for apps targeting Android 12 and higher -->
-    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" android:minSdkVersion="31"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" android:minSdkVersion="31"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:minSdkVersion="31"/>
+
     <!-- Optional: only required for FILE payloads -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <!--
- To verify that Bluetooth is supported on the device, and if it is,
-         ensure that it is enabled
-    -->
+
+    <!-- To verify that Bluetooth is supported on the device, and if it is, ensure that it is enabled -->
     <uses-feature android:name="android.hardware.bluetooth" android:required="true" />
 
     <application
@@ -55,9 +52,6 @@
             </intent-filter>
         </activity>
 
-        <receiver
-            android:name=".DeviceDiscoveryResultsReceiver"
-            android:exported="true" />
     </application>
 
 </manifest>
