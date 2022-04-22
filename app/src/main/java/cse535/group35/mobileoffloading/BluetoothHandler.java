@@ -38,7 +38,7 @@ public class BluetoothHandler {
         this.deviceDiscoveryResultsReceiver = new DeviceDiscoveryResultsReceiver();
         this.deviceDiscoveryResultsReceiver.setActivity(activity);
         this.deviceDiscoveryResultsReceiver.setBluetoothHandler(this);
-        this.registerDeviceDiscoveryResultsReceiver();
+        //this.registerDeviceDiscoveryResultsReceiver();
         this.initializeBluetoothDevicesAdapter();
     }
 
