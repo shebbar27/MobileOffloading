@@ -5,14 +5,11 @@ import static cse535.group35.mobileoffloading.R.string.*;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -33,10 +30,7 @@ import com.google.android.gms.nearby.connection.Strategy;
 import java.util.ArrayList;
 
 public class MasterActivity extends AppCompatActivity implements View.OnClickListener {
-    private static final int REQUEST_PERMISSIONS_CODE = 27;
-    private static final ArrayList<String> PERMISSIONS = BluetoothHandler.getBluetoothPermissions();
     public ArrayAdapter<String> nearbyDevicesAdapter;
-    private BluetoothHandler bluetoothHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +38,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_master);
         nearbyDevicesAdapter=new ArrayAdapter<>(this,
                 android.R.layout.simple_selectable_list_item);
-        this.bluetoothHandler = new BluetoothHandler(this);
         this.registerOnClickListenerCallBackForButtons();
-        this.requestPermissions();
         this.initializeDevicesListView();
     }
 
@@ -54,12 +46,10 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             case scan_button:
-                //this.bluetoothHandler.scanForAvailableBluetoothDevices();
                 startDiscovery();
                 break;
 
             case next_button:
-                this.bluetoothHandler.connectWithSelectedBluetoothDevices();
                 break;
         }
     }
@@ -93,37 +83,6 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                                 // We're unable to start discovering.
                             });
         }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_PERMISSIONS_CODE && grantResults.length > 0
-                && this.areAllPermissionsGranted()) {
-            this.bluetoothHandler.enableBluetooth();
-        } else {
-            this.bluetoothHandler.checkForBluetoothConnectPermission();
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        this.bluetoothHandler.checkForBluetoothEnabledAndDisplayAlert(requestCode, resultCode);
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        this.bluetoothHandler.onDestroy();
-    }
-
-    public void requestPermissions() {
-        ActivityCompat.requestPermissions(this,
-                PERMISSIONS.toArray(new String[0]),
-                REQUEST_PERMISSIONS_CODE);
-    }
 
     private void registerOnClickListenerCallBackForButtons() {
         AppUtility.registerButtonOnClickCallBack(this,
@@ -189,16 +148,5 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                                 });
             }
         });
-    }
-
-    private boolean areAllPermissionsGranted() {
-        for (String permission : PERMISSIONS) {
-            if (ContextCompat.checkSelfPermission(this, permission)
-                    != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }
