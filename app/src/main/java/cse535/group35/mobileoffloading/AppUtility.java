@@ -25,6 +25,18 @@ public class AppUtility {
                 alert_dialog_ok);
     }
 
+    public static void createTurnOnGPSAlert(AppCompatActivity activity,
+                                            OnClickListener positiveButtonOnClickCallBack,
+                                            OnClickListener negativeButtonOnClickCallBack) {
+        createAlertDialogAndShow(activity,
+                turn_on_gps_dialog_title,
+                turn_on_gps_message,
+                alert_dialog_yes,
+                positiveButtonOnClickCallBack,
+                alert_dialog_no,
+                negativeButtonOnClickCallBack);
+    }
+
     public static void exitApplicationWithDefaultAlert(AppCompatActivity activity) {
         createExitAlertDialogWithConsentAndExit(activity,
                 exit_dialog_title,

@@ -16,8 +16,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" android:minSdkVersion="31"/>
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:minSdkVersion="31"/>
 
-    <!-- Optional: only required for FILE payloads -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- To verify that Bluetooth is supported on the device, and if it is, ensure that it is enabled -->
     <uses-feature android:name="android.hardware.bluetooth" android:required="true" />

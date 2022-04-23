@@ -37,7 +37,6 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                 android.R.layout.simple_selectable_list_item);
         this.registerOnClickListenerCallBackForButtons();
         this.initializeDevicesListView();
-        BluetoothPermissionsManager.requestPermissions(this, REQUEST_PERMISSIONS_CODE);
     }
 
     @Override

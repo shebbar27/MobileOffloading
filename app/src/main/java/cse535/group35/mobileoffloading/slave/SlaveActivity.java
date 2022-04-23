@@ -6,11 +6,18 @@ import static cse535.group35.mobileoffloading.R.string.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.BatteryManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
@@ -39,8 +46,8 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
 
         this.registerOnClickListenerCallBackForButtons();
         this.nearbyServiceId = getString(R.string.nearbyServiceId);
-        BluetoothPermissionsManager.requestPermissions(this, REQUEST_PERMISSIONS_CODE);
         this.setDeviceNameAndLabel();
+        this.setDeviceInfo();
     }
 
     @Override
@@ -94,6 +101,14 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
         slaveNameTextView.setText(String.format(getString(device_name), this.slaveName));
     }
 
+    private void setDeviceInfo() {
+        TextView batteryLevelTextView = findViewById(battery_level_textView);
+        batteryLevelTextView.setText(String.format(getString(battery_level), this.getCurrentBatteryLevel()));
+        TextView locationTextView = findViewById(location_textView);
+        String[] locationData = this.getGPSLocationCoordinates();
+        locationTextView.setText(String.format(getString(location), locationData[0], locationData[1]));
+    }
+
     private void startOrStopAdvertising()
     {
         BluetoothPermissionsManager.checkForBluetoothEnabledAndTakeAction(this,
@@ -123,6 +138,56 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
             startStopAdvertising.setText(stop_advertising);
             this.isAdvertisingStarted = true;
         }
+    }
+
+    private String getCurrentBatteryLevel() {
+        BatteryManager batteryManager = (BatteryManager)getSystemService(BATTERY_SERVICE);
+        return Integer.toString(batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY));
+    }
+
+    private String[] getGPSLocationCoordinates() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        String[] locationData = new String[]{"NaN", "NaN"};
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            this.turnOnGPS();
+        } else {
+            locationData = this.getLocation(locationManager);
+        }
+
+        return locationData;
+    }
+
+    private void turnOnGPS() {
+        AppUtility.createTurnOnGPSAlert(this,
+                (dialog, which) -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)),
+                (dialog, which) ->
+                {
+                    dialog.cancel();
+                    AppUtility.createAndDisplayToast(this,
+                            "GPS was not enabled on device. Hence location data cannot be updated!",
+                            Toast.LENGTH_LONG);
+                });
+    }
+
+    @SuppressLint("MissingPermission")
+    private String[] getLocation(LocationManager locationManager) {
+        String[] locationData = new String[] {"NaN", "NaN"};
+        if(!BluetoothPermissionsManager.areAllPermissionsGranted(this)) {
+            BluetoothPermissionsManager.requestPermissions(this,
+                    REQUEST_PERMISSIONS_CODE);
+        }
+        else {
+            Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (locationGPS != null) {
+                locationData[0] = Double.toString(locationGPS.getLatitude());
+                locationData[1] = Double.toString(locationGPS.getLatitude());
+                AppUtility.createAndDisplayToast(this, "Your Location: " + "\n" + "Latitude: " + locationData[0] + "\n" + "Longitude: " + locationData[1]);
+            } else {
+                AppUtility.createAndDisplayToast(this, "Unable to find location. It will be updated soon");
+            }
+        }
+
+        return locationData;
     }
 
     private void returnToMainActivity() {

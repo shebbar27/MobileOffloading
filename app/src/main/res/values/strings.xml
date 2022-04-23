@@ -23,6 +23,8 @@
     <string name="crash_dialog_message">
         Unfortunately the app has stopped working! Exiting the App!
     </string>
+    <string name="turn_on_gps_dialog_title">Turn On GPS!</string>
+    <string name="turn_on_gps_message">Do you wish to turn on GPS?</string>
     <string name="empty_string" />
     <string name="scan">Scan</string>
     <string name="devices_discovered">Devices Discovered</string>
