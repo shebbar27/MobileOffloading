@@ -17,7 +17,7 @@
     </string>
     <string name="bluetooth_enabled_alert_title">Bluetooth Enabled on Device!</string>
     <string name="bluetooth_enabled_alert_message">
-        Bluetooth is now enabled on the device! You can now use Scan and Connect option to connect to other devices
+        Bluetooth is now enabled on the device! You can now use Scan/Advertise option to connect to other devices
     </string>
     <string name="crash_dialog_title">Error</string>
     <string name="crash_dialog_message">
@@ -35,4 +35,12 @@
     <string name="slave">Slave</string>
     <string name="master">Master</string>
     <string name="nearbyServiceId">OffloadingService</string>
+    <string name="device_name" formatted="false">Device Name: %1$s</string>
+    <string name="start_advertising">Start Advertising</string>
+    <string name="stop_advertising">Stop Advertising</string>
+    <string name="battery_level" formatted="false">Battery Level: %1$s</string>
+    <string name="location" formatted="false">Location: x=%1$s y=%2$s</string>
+    <string name="device_info">Device Info</string>
+    <string name="status">Status: %1$s</string>
+    <string name="empty_space">\" \"</string>
 </resources>

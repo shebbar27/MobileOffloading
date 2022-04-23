@@ -13,13 +13,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 
 public class BluetoothPermissionsManager {
-
-    private static final int REQUEST_ENABLE_BT = 137;
-    private static final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
     public static ArrayList<String> getBluetoothPermissions() {
         final ArrayList<String> permissions = new ArrayList<String>() {{
@@ -38,37 +36,54 @@ public class BluetoothPermissionsManager {
         return permissions;
     }
 
-    public static void checkForBluetoothConnectPermission(AppCompatActivity activity) {
-        if(!isBluetoothConnectPermissionGranted(activity)) {
-            displayBluetoothPermissionDeniedAlertAndExitApp(activity);
+    public static void requestPermissions(AppCompatActivity activity, int requestPermissionCode) {
+        if(!areAllPermissionsGranted(activity)) {
+            ActivityCompat.requestPermissions(activity,
+                    getBluetoothPermissions().toArray(new String[0]),
+                    requestPermissionCode);
+        }
+    }
+
+    public static boolean areAllPermissionsGranted(AppCompatActivity activity) {
+        for (String permission : getBluetoothPermissions()) {
+            if (ContextCompat.checkSelfPermission(activity, permission)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static void checkForBluetoothEnabledAndDisplayAlert(AppCompatActivity activity,
+                                                               int enableRequestCode,
+                                                               int resultCode) {
+        if (resultCode == Activity.RESULT_OK) {
+            displayBluetoothEnabledAlert(activity);
+        } else {
+            displayBluetoothNotEnabledToastAndRetry(activity, enableRequestCode);
         }
     }
 
     @SuppressWarnings("deprecation")
     @SuppressLint("MissingPermission")
-    public static void enableBluetooth(AppCompatActivity activity) {
+    public static void checkForBluetoothEnabledAndTakeAction(AppCompatActivity activity, int enableRequestCode) {
+        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
             displayBluetoothNotSupportedAlertAndExitApp(activity);
             return;
         }
 
         if (!bluetoothAdapter.isEnabled()) {
+            checkForBluetoothPermissionsAndShowAlert(activity);
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            checkForBluetoothConnectPermission(activity);
-
-            activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            activity.startActivityForResult(enableBtIntent, enableRequestCode);
         }
     }
 
-    public static void checkForBluetoothEnabledAndDisplayAlert(AppCompatActivity activity,
-                                                        int requestCode,
-                                                        int resultCode) {
-        if (requestCode == REQUEST_ENABLE_BT) {
-            if (resultCode == Activity.RESULT_OK) {
-                displayBluetoothEnabledAlert(activity);
-            } else {
-                displayBluetoothNotEnabledToastAndRetry(activity);
-            }
+    private static void checkForBluetoothPermissionsAndShowAlert(AppCompatActivity activity) {
+        if(!areAllPermissionsGranted(activity)) {
+            displayBluetoothPermissionDeniedAlertAndExitApp(activity);
         }
     }
 
@@ -83,11 +98,11 @@ public class BluetoothPermissionsManager {
         );
     }
 
-    private static void displayBluetoothNotEnabledToastAndRetry(AppCompatActivity activity) {
+    private static void displayBluetoothNotEnabledToastAndRetry(AppCompatActivity activity, int enableRequestCode) {
         AppUtility.createAndDisplayToast(activity,
                 "Bluetooth is not enabled on Device! Trying to enabled bluetooth.",
                 Toast.LENGTH_SHORT);
-        enableBluetooth(activity);
+        checkForBluetoothEnabledAndTakeAction(activity, enableRequestCode);
     }
 
     private static void displayBluetoothNotSupportedAlertAndExitApp(AppCompatActivity activity) {
