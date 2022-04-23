@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -76,23 +75,20 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
     private void initializeDevicesListView() {
         ListView devicesListView = findViewById(devices_listview);
         devicesListView.setAdapter(nearbyDevicesAdapter);
-        devicesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                 String selected=(String)adapterView.getItemAtPosition(i);
-                 Toast.makeText(MasterActivity.this, "Selected: " +selected, Toast.LENGTH_SHORT).show();
-                Nearby.getConnectionsClient(getApplicationContext())
-                        .requestConnection("MASTER", selected, new MasterConnectionLifecycleCallback(getApplicationContext()))
-                        .addOnSuccessListener(
-                                (Void unused) -> {
-                                    // We successfully requested a connection. Now both sides
-                                    // must accept before the connection is established.
-                                })
-                        .addOnFailureListener(
-                                (Exception e) -> {
-                                    // Nearby Connections failed to request the connection.
-                                });
-            }
+        devicesListView.setOnItemClickListener((adapterView, view, i, l) -> {
+             String selected=(String)adapterView.getItemAtPosition(i);
+             Toast.makeText(MasterActivity.this, "Selected: " +selected, Toast.LENGTH_SHORT).show();
+            Nearby.getConnectionsClient(getApplicationContext())
+                    .requestConnection("MASTER", selected, new MasterConnectionLifecycleCallback(getApplicationContext()))
+                    .addOnSuccessListener(
+                            (Void unused) -> {
+                                // We successfully requested a connection. Now both sides
+                                // must accept before the connection is established.
+                            })
+                    .addOnFailureListener(
+                            (Exception e) -> {
+                                // Nearby Connections failed to request the connection.
+                            });
         });
     }
 
