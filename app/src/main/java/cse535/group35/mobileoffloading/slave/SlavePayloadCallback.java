@@ -34,7 +34,7 @@ public class SlavePayloadCallback extends PayloadCallback {
                     Payload responsePayload=Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.DEVICE_STATE)
                             .setParameters(10,100,122)
                             .build());
-                    Nearby.getConnectionsClient(context).sendPayload(endpointId,responsePayload);
+                    Nearby.getConnectionsClient(context).sendPayload(endpointId, responsePayload);
                     AppUtility.createAndDisplayToast(context, "Sent payload");
                 }
             } catch (JSONException e) {

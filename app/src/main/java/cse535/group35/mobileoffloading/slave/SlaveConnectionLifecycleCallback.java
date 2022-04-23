@@ -17,10 +17,17 @@ public class SlaveConnectionLifecycleCallback extends ConnectionLifecycleCallbac
     public SlaveConnectionLifecycleCallback(Context context){
         this.context=context;
     }
+
     @Override
-    public void onConnectionInitiated(@NonNull String s, @NonNull ConnectionInfo connectionInfo) {
-        AppUtility.createAndDisplayToast(context, "Accepting Connection from " + connectionInfo.getEndpointName());
-        Nearby.getConnectionsClient(context).acceptConnection(s,new SlavePayloadCallback(context) );
+    public void onConnectionInitiated(@NonNull String endPointId, @NonNull ConnectionInfo connectionInfo) {
+        AppUtility.createAndDisplayToast(context,
+                "Accepting Connection from " + connectionInfo.getEndpointName());
+        AppUtility.createConnectionConsentAlert(context,
+                endPointId,
+                (dialog, which) -> Nearby.getConnectionsClient(context)
+                        .acceptConnection(endPointId, new SlavePayloadCallback(context)),
+                (dialog, which) -> dialog.cancel()
+        );
     }
 
     @Override

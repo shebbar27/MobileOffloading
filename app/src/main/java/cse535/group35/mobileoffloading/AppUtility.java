@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class AppUtility {
 
@@ -23,6 +24,19 @@ public class AppUtility {
                 crash_dialog_title,
                 crash_dialog_message,
                 alert_dialog_ok);
+    }
+
+    public static void createConnectionConsentAlert(Context context,
+                                                    String deviceName,
+                                                    OnClickListener positiveButtonOnClickCallBack,
+                                                    OnClickListener negativeButtonOnClickCallBack) {
+        createAlertDialogAndShow(context,
+                context.getString(connection_consent_alert_title),
+                String.format(Locale.US, context.getString(connection_consent_alert_message), deviceName),
+                context.getString(alert_dialog_yes),
+                positiveButtonOnClickCallBack,
+                context.getString(alert_dialog_no),
+                negativeButtonOnClickCallBack);
     }
 
     public static void createTurnOnGPSAlert(AppCompatActivity activity,
@@ -101,12 +115,44 @@ public class AppUtility {
                                                 OnClickListener positiveButtonOnClickCallBack,
                                                 int negativeButtonTextId,
                                                 OnClickListener negativeButtonOnClickCallBack) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
-        dialogBuilder.setTitle(activity.getString(titleId));
-        dialogBuilder.setMessage(activity.getString(messageId));
-        dialogBuilder.setPositiveButton(activity.getString(positiveButtonTextId), positiveButtonOnClickCallBack);
-        if(negativeButtonTextId != empty_string) {
-            dialogBuilder.setNegativeButton(activity.getString(negativeButtonTextId), negativeButtonOnClickCallBack);
+        createAlertDialogAndShow(activity,
+                activity.getString(titleId),
+                activity.getString(messageId),
+                activity.getString(positiveButtonTextId),
+                positiveButtonOnClickCallBack,
+                activity.getString(negativeButtonTextId),
+                negativeButtonOnClickCallBack);
+    }
+
+    public static void createAlertDialogAndShow(AppCompatActivity activity,
+                                                String title,
+                                                String message,
+                                                String positiveButtonText,
+                                                OnClickListener positiveButtonOnClickCallBack,
+                                                String negativeButtonText,
+                                                OnClickListener negativeButtonOnClickCallBack) {
+        createAlertDialogAndShow(activity.getApplicationContext(),
+                title,
+                message,
+                positiveButtonText,
+                positiveButtonOnClickCallBack,
+                negativeButtonText,
+                negativeButtonOnClickCallBack);
+    }
+
+    public static void createAlertDialogAndShow(Context context,
+                                                String title,
+                                                String message,
+                                                String positiveButtonText,
+                                                OnClickListener positiveButtonOnClickCallBack,
+                                                String negativeButtonText,
+                                                OnClickListener negativeButtonOnClickCallBack) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+        dialogBuilder.setTitle(title);
+        dialogBuilder.setMessage(message);
+        dialogBuilder.setPositiveButton(positiveButtonText, positiveButtonOnClickCallBack);
+        if(!negativeButtonText.equals(context.getString(empty_string))) {
+            dialogBuilder.setNegativeButton(negativeButtonText, negativeButtonOnClickCallBack);
         }
 
         AlertDialog dialog =  dialogBuilder.create();

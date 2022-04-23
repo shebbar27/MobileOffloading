@@ -35,12 +35,6 @@ public class DeviceInfoHandler {
                 getCurrentBatteryLevel(activity)));
     }
 
-    private static String getCurrentBatteryLevel(AppCompatActivity activity) {
-        BatteryManager batteryManager = (BatteryManager)activity.getSystemService(
-                AppCompatActivity.BATTERY_SERVICE);
-        return Integer.toString(batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY));
-    }
-
     public static void updateLocationTextView(AppCompatActivity activity,
                                               int requestPermissionsCode) {
         LocationManager locationManager = (LocationManager)activity.getSystemService(
@@ -55,6 +49,12 @@ public class DeviceInfoHandler {
         else {
             updateLocationTextView(activity, locationManager);
         }
+    }
+
+    private static String getCurrentBatteryLevel(AppCompatActivity activity) {
+        BatteryManager batteryManager = (BatteryManager)activity.getSystemService(
+                AppCompatActivity.BATTERY_SERVICE);
+        return Integer.toString(batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY));
     }
 
     private static void setLocationTextView(AppCompatActivity activity,

@@ -34,12 +34,14 @@
             android:exported="false"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".slave.SlaveActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".MainActivity"
