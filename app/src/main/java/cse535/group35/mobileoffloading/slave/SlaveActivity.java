@@ -6,18 +6,11 @@ import static cse535.group35.mobileoffloading.R.string.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationManager;
-import android.os.BatteryManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
@@ -28,7 +21,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import cse535.group35.mobileoffloading.AppUtility;
-import cse535.group35.mobileoffloading.BluetoothPermissionsManager;
+import cse535.group35.mobileoffloading.AppPermissionsManager;
 import cse535.group35.mobileoffloading.R;
 
 public class SlaveActivity extends AppCompatActivity implements View.OnClickListener {
@@ -47,7 +40,7 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
         this.registerOnClickListenerCallBackForButtons();
         this.nearbyServiceId = getString(R.string.nearbyServiceId);
         this.setDeviceNameAndLabel();
-        this.setDeviceInfo();
+        this.updateDeviceInfo();
     }
 
     @Override
@@ -55,6 +48,9 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
         switch (view.getId()) {
             case advertise_button:
                 this.startOrStopAdvertising();
+                break;
+            case update_device_info_button:
+                this.updateDeviceInfo();
                 break;
             case slave_back_button:
                 this.returnToMainActivity();
@@ -66,10 +62,10 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_PERMISSIONS_CODE && grantResults.length > 0
-                && BluetoothPermissionsManager.areAllPermissionsGranted(this)) {
-            BluetoothPermissionsManager.checkForBluetoothEnabledAndTakeAction(this, REQUEST_ENABLE_BT);
+                && AppPermissionsManager.areAllPermissionsGranted(this)) {
+            AppPermissionsManager.checkForBluetoothEnabledAndTakeAction(this, REQUEST_ENABLE_BT);
         } else {
-            BluetoothPermissionsManager.requestPermissions(this, REQUEST_PERMISSIONS_CODE);
+            AppPermissionsManager.requestAllPermissions(this, REQUEST_PERMISSIONS_CODE);
         }
     }
 
@@ -77,7 +73,7 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_ENABLE_BT) {
-            BluetoothPermissionsManager.checkForBluetoothEnabledAndDisplayAlert(this,
+            AppPermissionsManager.checkForBluetoothEnabledAndDisplayAlert(this,
                     REQUEST_ENABLE_BT,
                     resultCode);
         }
@@ -88,6 +84,7 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
                 this,
                 new ArrayList<Integer>() {{
                     add(advertise_button);
+                    add(update_device_info_button);
                     add(slave_back_button);
                 }}
         );
@@ -101,17 +98,15 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
         slaveNameTextView.setText(String.format(getString(device_name), this.slaveName));
     }
 
-    private void setDeviceInfo() {
-        TextView batteryLevelTextView = findViewById(battery_level_textView);
-        batteryLevelTextView.setText(String.format(getString(battery_level), this.getCurrentBatteryLevel()));
-        TextView locationTextView = findViewById(location_textView);
-        String[] locationData = this.getGPSLocationCoordinates();
-        locationTextView.setText(String.format(getString(location), locationData[0], locationData[1]));
+    private void updateDeviceInfo() {
+        DeviceInfoHandler.updateBatteryLevelTextView(this);
+        DeviceInfoHandler.updateLocationTextView(this,
+                REQUEST_PERMISSIONS_CODE);
     }
 
     private void startOrStopAdvertising()
     {
-        BluetoothPermissionsManager.checkForBluetoothEnabledAndTakeAction(this,
+        AppPermissionsManager.checkForBluetoothEnabledAndTakeAction(this,
                 REQUEST_ENABLE_BT);
 
         Button startStopAdvertising = findViewById(advertise_button);
@@ -138,56 +133,6 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
             startStopAdvertising.setText(stop_advertising);
             this.isAdvertisingStarted = true;
         }
-    }
-
-    private String getCurrentBatteryLevel() {
-        BatteryManager batteryManager = (BatteryManager)getSystemService(BATTERY_SERVICE);
-        return Integer.toString(batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY));
-    }
-
-    private String[] getGPSLocationCoordinates() {
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        String[] locationData = new String[]{"NaN", "NaN"};
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            this.turnOnGPS();
-        } else {
-            locationData = this.getLocation(locationManager);
-        }
-
-        return locationData;
-    }
-
-    private void turnOnGPS() {
-        AppUtility.createTurnOnGPSAlert(this,
-                (dialog, which) -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)),
-                (dialog, which) ->
-                {
-                    dialog.cancel();
-                    AppUtility.createAndDisplayToast(this,
-                            "GPS was not enabled on device. Hence location data cannot be updated!",
-                            Toast.LENGTH_LONG);
-                });
-    }
-
-    @SuppressLint("MissingPermission")
-    private String[] getLocation(LocationManager locationManager) {
-        String[] locationData = new String[] {"NaN", "NaN"};
-        if(!BluetoothPermissionsManager.areAllPermissionsGranted(this)) {
-            BluetoothPermissionsManager.requestPermissions(this,
-                    REQUEST_PERMISSIONS_CODE);
-        }
-        else {
-            Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (locationGPS != null) {
-                locationData[0] = Double.toString(locationGPS.getLatitude());
-                locationData[1] = Double.toString(locationGPS.getLatitude());
-                AppUtility.createAndDisplayToast(this, "Your Location: " + "\n" + "Latitude: " + locationData[0] + "\n" + "Longitude: " + locationData[1]);
-            } else {
-                AppUtility.createAndDisplayToast(this, "Unable to find location. It will be updated soon");
-            }
-        }
-
-        return locationData;
     }
 
     private void returnToMainActivity() {

@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         this.registerOnClickListenerCallBackForButtons();
         this.initializeModeSelectorSpinner();
-        BluetoothPermissionsManager.requestPermissions(this, REQUEST_PERMISSIONS_CODE);
+        AppPermissionsManager.requestAllPermissions(this, REQUEST_PERMISSIONS_CODE);
     }
 
     @Override
@@ -49,10 +49,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_PERMISSIONS_CODE && grantResults.length > 0
-                && BluetoothPermissionsManager.areAllPermissionsGranted(this)) {
-            BluetoothPermissionsManager.checkForBluetoothEnabledAndTakeAction(this, REQUEST_ENABLE_BT);
+                && AppPermissionsManager.areAllPermissionsGranted(this)) {
+            AppPermissionsManager.checkForBluetoothEnabledAndTakeAction(this, REQUEST_ENABLE_BT);
         } else {
-            BluetoothPermissionsManager.requestPermissions(this, REQUEST_PERMISSIONS_CODE);
+            AppPermissionsManager.requestAllPermissions(this, REQUEST_PERMISSIONS_CODE);
         }
     }
 
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_ENABLE_BT) {
-            BluetoothPermissionsManager.checkForBluetoothEnabledAndDisplayAlert(this,
+            AppPermissionsManager.checkForBluetoothEnabledAndDisplayAlert(this,
                     REQUEST_ENABLE_BT,
                     resultCode);
         }

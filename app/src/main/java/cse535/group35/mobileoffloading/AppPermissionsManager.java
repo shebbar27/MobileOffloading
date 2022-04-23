@@ -17,9 +17,9 @@ import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 
-public class BluetoothPermissionsManager {
+public class AppPermissionsManager {
 
-    public static ArrayList<String> getBluetoothPermissions() {
+    public static ArrayList<String> getAllPermissions() {
         final ArrayList<String> permissions = new ArrayList<String>() {{
                 add(Manifest.permission.ACCESS_COARSE_LOCATION);
                 add(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -36,16 +36,16 @@ public class BluetoothPermissionsManager {
         return permissions;
     }
 
-    public static void requestPermissions(AppCompatActivity activity, int requestPermissionCode) {
+    public static void requestAllPermissions(AppCompatActivity activity, int requestPermissionCode) {
         if(!areAllPermissionsGranted(activity)) {
             ActivityCompat.requestPermissions(activity,
-                    getBluetoothPermissions().toArray(new String[0]),
+                    getAllPermissions().toArray(new String[0]),
                     requestPermissionCode);
         }
     }
 
     public static boolean areAllPermissionsGranted(AppCompatActivity activity) {
-        for (String permission : getBluetoothPermissions()) {
+        for (String permission : getAllPermissions()) {
             if (ContextCompat.checkSelfPermission(activity, permission)
                     != PackageManager.PERMISSION_GRANTED) {
                 return false;
@@ -56,8 +56,8 @@ public class BluetoothPermissionsManager {
     }
 
     public static void checkForBluetoothEnabledAndDisplayAlert(AppCompatActivity activity,
-                                                               int enableRequestCode,
-                                                               int resultCode) {
+                                                                    int enableRequestCode,
+                                                                    int resultCode) {
         if (resultCode == Activity.RESULT_OK) {
             displayBluetoothEnabledAlert(activity);
         } else {

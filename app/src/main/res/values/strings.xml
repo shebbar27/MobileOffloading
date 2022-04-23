@@ -41,8 +41,8 @@
     <string name="start_advertising">Start Advertising</string>
     <string name="stop_advertising">Stop Advertising</string>
     <string name="battery_level" formatted="false">Battery Level: %1$s</string>
-    <string name="location" formatted="false">Location: x=%1$s y=%2$s</string>
+    <string name="location" formatted="false">Location: Latitude=%1$s Longitude=%2$s</string>
     <string name="device_info">Device Info</string>
     <string name="status">Status: %1$s</string>
-    <string name="empty_space">\" \"</string>
+    <string name="update_device_info">Update Device Info</string>
 </resources>
