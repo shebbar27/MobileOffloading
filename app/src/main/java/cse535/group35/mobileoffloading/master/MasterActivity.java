@@ -1,13 +1,11 @@
-package cse535.group35.mobileoffloading;
+package cse535.group35.mobileoffloading.master;
 
 import static cse535.group35.mobileoffloading.R.id.*;
 import static cse535.group35.mobileoffloading.R.string.*;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import android.widget.AdapterView;
@@ -16,21 +14,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.nearby.Nearby;
-import com.google.android.gms.nearby.connection.ConnectionInfo;
-import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
-import com.google.android.gms.nearby.connection.ConnectionResolution;
-import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo;
 import com.google.android.gms.nearby.connection.DiscoveryOptions;
-import com.google.android.gms.nearby.connection.EndpointDiscoveryCallback;
-import com.google.android.gms.nearby.connection.Payload;
-import com.google.android.gms.nearby.connection.PayloadCallback;
-import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
 
 import java.util.ArrayList;
 
-import cse535.group35.mobileoffloading.master.MasterConnectionLifecycleCallback;
-import cse535.group35.mobileoffloading.master.MasterEndpointDiscoveryCallback;
+import cse535.group35.mobileoffloading.AppUtility;
+import cse535.group35.mobileoffloading.R;
 
 public class MasterActivity extends AppCompatActivity implements View.OnClickListener {
     public ArrayAdapter<String> nearbyDevicesAdapter;
@@ -51,8 +41,8 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
             case scan_button:
                 startDiscovery();
                 break;
-
-            case next_button:
+            case master_back_button:
+                ReturnToMainActivity();
                 break;
         }
     }
@@ -78,8 +68,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                 this,
                 new ArrayList<Integer>() {{
                     add(scan_button);
-                    add(connect);
-                    add(exit_button);
+                    add(master_back_button);
                 }}
         );
     }
@@ -105,5 +94,9 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                                 });
             }
         });
+    }
+
+    private void ReturnToMainActivity() {
+        AppUtility.finishAndCloseCurrentActivityWithDefaultAlert(this);
     }
 }

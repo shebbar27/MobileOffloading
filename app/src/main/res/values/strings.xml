@@ -5,6 +5,8 @@
     <string name="alert_dialog_no">No</string>
     <string name="exit_dialog_title">Exiting App!</string>
     <string name="exit_dialog_message">Are you sure you want to exit?</string>
+    <string name="finish_activity_dialog_title">Returning to Home page!</string>
+    <string name="finish_activity_dialog_message">Are you sure you want to return to Home page?</string>
     <string name="bluetooth_permission_denied_alert_title">Bluetooth Permission Denied!</string>
     <string name="bluetooth_permission_denied_alert_message">
         App can not function without access to Bluetooth! Go to Settings and enable bluetooth access. Exiting the app!
@@ -26,8 +28,9 @@
     <string name="devices_discovered">Devices Discovered</string>
     <string name="connect">Connect</string>
     <string name="exit">Exit</string>
+    <string name="back">Back</string>
     <string name="select_mode_of_operation">Select Mode of Operation</string>
-    <string name="continue_button">Continue</string>
+    <string name="continue_label">Continue</string>
     <string name="mode">Mode</string>
     <string name="slave">Slave</string>
     <string name="master">Master</string>

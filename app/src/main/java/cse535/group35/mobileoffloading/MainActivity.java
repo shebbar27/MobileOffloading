@@ -17,20 +17,21 @@ import android.widget.Spinner;
 
 import java.util.ArrayList;
 
+import cse535.group35.mobileoffloading.master.MasterActivity;
+import cse535.group35.mobileoffloading.slave.SlaveActivity;
+
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int REQUEST_PERMISSIONS_CODE = 27;
     private static final ArrayList<String> PERMISSIONS = BluetoothPermissionsManager.getBluetoothPermissions();
     private Spinner devicesListView;
-    private BluetoothPermissionsManager bluetoothHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.bluetoothHandler = new BluetoothPermissionsManager(this);
         this.registerOnClickListenerCallBackForButtons();
         this.requestPermissions();
         this.initializeModeSelectorSpinner();
@@ -39,10 +40,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case next_button:
+            case continue_button:
                 this.navigateToSelectedMode();
                 break;
-            case exit_button:
+            case main_exit_button:
                 this.exitApplication();
         }
     }
@@ -52,24 +53,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_PERMISSIONS_CODE && grantResults.length > 0
                 && this.areAllPermissionsGranted()) {
-            this.bluetoothHandler.enableBluetooth();
+            BluetoothPermissionsManager.enableBluetooth(this);
         } else {
-            this.bluetoothHandler.checkForBluetoothConnectPermission();
+            BluetoothPermissionsManager.checkForBluetoothConnectPermission(this);
         }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        this.bluetoothHandler.checkForBluetoothEnabledAndDisplayAlert(requestCode, resultCode);
+        BluetoothPermissionsManager.checkForBluetoothEnabledAndDisplayAlert(this, requestCode, resultCode);
     }
 
     private void registerOnClickListenerCallBackForButtons() {
         AppUtility.registerButtonOnClickCallBack(this,
                 this,
                 new ArrayList<Integer>() {{
-                    add(next_button);
-                    add(exit_button);
+                    add(continue_button);
+                    add(main_exit_button);
                 }}
         );
     }
@@ -124,10 +125,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void exitApplication() {
-        AppUtility.createExitAlertDialogWithConsentAndExit(this,
-                exit_dialog_title,
-                exit_dialog_message,
-                alert_dialog_yes,
-                alert_dialog_no);
+        AppUtility.exitApplicationWithDefaultAlert(this);
     }
 }

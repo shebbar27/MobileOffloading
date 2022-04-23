@@ -19,10 +19,10 @@
         app:layout_constraintVertical_bias="0.3" />
 
     <Button
-        android:id="@+id/next_button"
+        android:id="@+id/continue_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/continue_button"
+        android:text="@string/continue_label"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,14 +31,14 @@
         app:layout_constraintVertical_bias="0.100000024" />
 
     <Button
-        android:id="@+id/exit_button"
+        android:id="@+id/main_exit_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/exit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/next_button"
+        app:layout_constraintTop_toBottomOf="@+id/continue_button"
         app:layout_constraintVertical_bias="0.35000002" />
 
     <Spinner

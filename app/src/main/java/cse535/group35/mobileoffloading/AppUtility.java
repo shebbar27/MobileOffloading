@@ -3,6 +3,7 @@ package cse535.group35.mobileoffloading;
 import static android.content.DialogInterface.*;
 import static cse535.group35.mobileoffloading.R.string.*;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +23,22 @@ public class AppUtility {
                 crash_dialog_title,
                 crash_dialog_message,
                 alert_dialog_ok);
+    }
+
+    public static void exitApplicationWithDefaultAlert(AppCompatActivity activity) {
+        createExitAlertDialogWithConsentAndExit(activity,
+                exit_dialog_title,
+                exit_dialog_message,
+                alert_dialog_yes,
+                alert_dialog_no);
+    }
+
+    public static void finishAndCloseCurrentActivityWithDefaultAlert(AppCompatActivity activity) {
+        createAlertDialogWithConsentAndFinishActivity(activity,
+                finish_activity_dialog_title,
+                finish_activity_dialog_message,
+                alert_dialog_yes,
+                alert_dialog_no);
     }
 
     public static void createExitAlertDialogWithConsentAndExit(AppCompatActivity activity,
@@ -51,6 +68,20 @@ public class AppUtility {
                 (dialog, which) -> dialog.cancel());
     }
 
+    public static void createAlertDialogWithConsentAndFinishActivity(AppCompatActivity activity,
+                                                               int titleId,
+                                                               int messageId,
+                                                               int positiveButtonTextId,
+                                                               int negativeButtonTextId) {
+        createAlertDialogAndShow(activity,
+                titleId,
+                messageId,
+                positiveButtonTextId,
+                (dialog, which) -> activity.finish(),
+                negativeButtonTextId,
+                (dialog, which) -> dialog.cancel());
+    }
+
     public static void createAlertDialogAndShow(AppCompatActivity activity,
                                                 int titleId,
                                                 int messageId,
@@ -68,11 +99,6 @@ public class AppUtility {
 
         AlertDialog dialog =  dialogBuilder.create();
         dialog.show();
-    }
-
-    public static void exitApplication(AppCompatActivity activity) {
-        activity.finishAndRemoveTask();
-        System.exit(0);
     }
 
     public static void registerButtonOnClickCallBack(AppCompatActivity activity,
@@ -93,11 +119,28 @@ public class AppUtility {
     public static void createAndDisplayToast(AppCompatActivity activity,
                                              String message,
                                              int duration) {
-        Toast toast = Toast.makeText(activity, message, duration);
-        toast.show();
+        createAndDisplayToast(activity.getApplicationContext(), message, duration);
     }
 
     public static void createAndDisplayToast(AppCompatActivity activity, String message) {
-        createAndDisplayToast(activity, message, Toast.LENGTH_SHORT);
+        createAndDisplayToast(activity.getApplicationContext(), message, Toast.LENGTH_SHORT);
+    }
+
+    public static void createAndDisplayToast(Context context,
+                                             String message,
+                                             int duration) {
+        Toast toast = Toast.makeText(context, message, duration);
+        toast.show();
+    }
+
+    public static void createAndDisplayToast(Context context,
+                                             String message) {
+        Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    private static void exitApplication(AppCompatActivity activity) {
+        activity.finishAndRemoveTask();
+        System.exit(0);
     }
 }

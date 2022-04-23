@@ -1,27 +1,28 @@
-package cse535.group35.mobileoffloading;
+package cse535.group35.mobileoffloading.slave;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
 import com.google.android.gms.nearby.connection.Strategy;
 
-import cse535.group35.mobileoffloading.slave.SlaveConnectionLifecycleCallback;
+import cse535.group35.mobileoffloading.AppUtility;
+import cse535.group35.mobileoffloading.R;
 
 public class SlaveActivity extends AppCompatActivity {
 
     String nearbyServiceId;
     TextView slaveNameTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slave);
-        nearbyServiceId=getResources().getString(R.string.nearbyServiceId);
-        slaveNameTextView= (TextView) findViewById(R.id.slaveName);
+        nearbyServiceId = getResources().getString(R.string.nearbyServiceId);
+        slaveNameTextView = findViewById(R.id.slaveName);
         startAdvertising();
     }
 
@@ -35,12 +36,10 @@ public class SlaveActivity extends AppCompatActivity {
                 .startAdvertising(
                         slaveName, nearbyServiceId, new SlaveConnectionLifecycleCallback(getApplicationContext()), advertisingOptions)
                 .addOnSuccessListener(
-                        (Void unused) -> {
-                            Toast.makeText(this, "Started Advertising", Toast.LENGTH_SHORT).show();
-                        })
+                        (Void unused) -> AppUtility.createAndDisplayToast(this,
+                                "Started Advertising"))
                 .addOnFailureListener(
-                        (Exception e) -> {
-                            Toast.makeText(this, "Failed to Advertise: "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        });
+                        (Exception e) ->  AppUtility.createAndDisplayToast(this,
+                                "Failed to Advertise: "+e.getMessage()));
     }
 }

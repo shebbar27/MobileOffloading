@@ -30,13 +30,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MobileOffloading">
         <activity
-            android:name=".SlaveActivity"
+            android:name=".master.MasterActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".MasterActivity"
+            android:name=".slave.SlaveActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
@@ -45,6 +45,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
