@@ -17,7 +17,6 @@ import com.google.android.gms.nearby.connection.AdvertisingOptions;
 import com.google.android.gms.nearby.connection.ConnectionsClient;
 import com.google.android.gms.nearby.connection.Strategy;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.UUID;
 

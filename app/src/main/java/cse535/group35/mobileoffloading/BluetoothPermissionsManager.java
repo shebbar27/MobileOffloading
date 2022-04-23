@@ -118,10 +118,4 @@ public class BluetoothPermissionsManager {
                 bluetooth_permission_denied_alert_message,
                 alert_dialog_ok);
     }
-
-    private static boolean isBluetoothConnectPermissionGranted(AppCompatActivity activity) {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
-                ActivityCompat.checkSelfPermission(activity,
-                        Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED;
-    }
 }
