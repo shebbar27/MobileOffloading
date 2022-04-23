@@ -131,13 +131,17 @@ public class AppUtility {
                                                 OnClickListener positiveButtonOnClickCallBack,
                                                 String negativeButtonText,
                                                 OnClickListener negativeButtonOnClickCallBack) {
-        createAlertDialogAndShow(activity.getApplicationContext(),
-                title,
-                message,
-                positiveButtonText,
-                positiveButtonOnClickCallBack,
-                negativeButtonText,
-                negativeButtonOnClickCallBack);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
+        dialogBuilder.setTitle(title);
+        dialogBuilder.setMessage(message);
+        dialogBuilder.setPositiveButton(positiveButtonText, positiveButtonOnClickCallBack);
+        if(!negativeButtonText.equals(activity.getString(empty_string))) {
+            dialogBuilder.setNegativeButton(negativeButtonText, negativeButtonOnClickCallBack);
+        }
+
+        AlertDialog dialog =  dialogBuilder.create();
+        dialog.show();
+
     }
 
     public static void createAlertDialogAndShow(Context context,
