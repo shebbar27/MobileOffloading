@@ -137,4 +137,9 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
     private void returnToMainActivity() {
         AppUtility.finishAndCloseCurrentActivityWithDefaultAlert(this);
     }
+
+    public void updateBatteryLevelTextView(String slaveStatus) {
+        TextView statusTextView = this.findViewById(status_textView);
+        statusTextView.setText(String.format(this.getString(status), slaveStatus));
+    }
 }
