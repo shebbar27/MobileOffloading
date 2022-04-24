@@ -1,6 +1,8 @@
 package cse535.group35.mobileoffloading.master;
 
 import android.app.Activity;
+import android.content.Context;
+import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 
@@ -17,10 +19,11 @@ import cse535.group35.mobileoffloading.RequestType;
 public class MasterConnectionLifecycleCallback extends ConnectionLifecycleCallback {
 
     private final Activity activity;
-    public MasterConnectionLifecycleCallback(Activity activity){
+    private ArrayAdapter<String> connectedDevicesAdaptor;
+    public MasterConnectionLifecycleCallback(Activity activity, ArrayAdapter<String> connectedDevicesAdaptor){
         this.activity = activity;
+        this.connectedDevicesAdaptor=connectedDevicesAdaptor;
     }
-
     @Override
     public void onConnectionInitiated(@NonNull String s, @NonNull ConnectionInfo connectionInfo) {
         AppUtility.createAndDisplayToast(this.activity, "Connection Initiated with " + s);
@@ -28,9 +31,10 @@ public class MasterConnectionLifecycleCallback extends ConnectionLifecycleCallba
     }
 
     @Override
-    public void onConnectionResult(@NonNull String s, @NonNull ConnectionResolution connectionResolution) {
+    public void onConnectionResult(@NonNull String endpointId, @NonNull ConnectionResolution connectionResolution) {
+        connectedDevicesAdaptor.add(endpointId);
         Payload payload= Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.DEVICE_STATE).build());
-        Nearby.getConnectionsClient(this.activity).sendPayload(s, payload);
+        Nearby.getConnectionsClient(this.activity).sendPayload(endpointId, payload);
         AppUtility.createAndDisplayToast(this.activity, "Payload sent");
     }
 
