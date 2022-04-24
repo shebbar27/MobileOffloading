@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class PayloadBuilder {
@@ -15,6 +16,8 @@ public class PayloadBuilder {
 
     private RequestType requestType;
     private String parameters;
+    private int[][] matrixA,matrixB;
+    private ArrayList<Integer> rows;
 
     public PayloadBuilder setRequestType(RequestType requestType){
         this.requestType = requestType;
@@ -36,14 +39,33 @@ public class PayloadBuilder {
         return this;
     }
 
+    public PayloadBuilder setParameters(int[][] matrixA,int[][] matrixB){
+        this.matrixA=matrixA;
+        this.matrixB=matrixB;
+        return this;
+    }
+    public PayloadBuilder setParameters(ArrayList<Integer> rows){
+        this.rows=rows;
+        return this;
+    }
+
     public byte[] build(){
         JSONObject payload = new JSONObject();
 
         try {
+        if(requestType==RequestType.COMPUTE_RESULT){
+            payload.put("matrixA",matrixA);
+            payload.put("matrixB",matrixB);
+            payload.put("rowsToCompute",rows);
+        }
+        else if(requestType==RequestType.DEVICE_STATE){
             payload.put(requestTypeKey, requestType);
             if(parameters != null){
                 payload.put(parametersKey, parameters);
             }
+        }
+
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

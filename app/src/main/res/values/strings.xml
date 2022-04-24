@@ -49,4 +49,5 @@
     <string name="device_info">Device Info</string>
     <string name="status">Status: %1$s</string>
     <string name="update_device_info">Update Device Info</string>
+    <string name="computeButtonText">Compute</string>
 </resources>

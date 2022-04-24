@@ -35,22 +35,32 @@
         android:id="@+id/master_back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
         android:text="@string/back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/devices_listview" />
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ListView
         android:id="@+id/devices_listview"
-        android:layout_width="360dp"
-        android:layout_height="360dp"
+        android:layout_width="370dp"
+        android:layout_height="231dp"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/select_mode_textView"
         app:layout_constraintVertical_bias="0.100000024" />
+
+    <Button
+        android:id="@+id/computeBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/computeButtonText"
+        app:layout_constraintBottom_toTopOf="@+id/master_back_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/devices_listview" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

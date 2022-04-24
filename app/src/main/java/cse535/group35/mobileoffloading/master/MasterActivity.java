@@ -13,11 +13,13 @@ import android.os.Bundle;
 import android.view.View;
 
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.DiscoveryOptions;
+import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.Strategy;
 
 import java.util.ArrayList;
@@ -26,13 +28,17 @@ import java.util.List;
 import cse535.group35.mobileoffloading.AppUtility;
 import cse535.group35.mobileoffloading.AppPermissionsManager;
 import cse535.group35.mobileoffloading.ConnectedDevice;
-import cse535.group35.mobileoffloading.MainActivity;
+import cse535.group35.mobileoffloading.PayloadBuilder;
 import cse535.group35.mobileoffloading.R;
+import cse535.group35.mobileoffloading.RequestType;
+import cse535.group35.mobileoffloading.TestMatrix;
 
 public class MasterActivity extends AppCompatActivity implements View.OnClickListener {
     public ArrayAdapter<String> nearbyDevicesAdapter;
     public ArrayAdapter<String> connectedDevicesAdaptor;
     public List<ConnectedDevice> connectedDeviceList;
+    
+    private Button computeButton;
     private static final int REQUEST_PERMISSIONS_CODE = 27;
     private static final int REQUEST_ENABLE_BT = 137;
 
@@ -46,7 +52,9 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                 android.R.layout.simple_selectable_list_item);
         this.registerOnClickListenerCallBackForButtons();
         this.initializeDevicesListView();
+        computeButton= (Button) findViewById(computeBtn);
         connectedDeviceList= new ArrayList<>();
+        
 
     }
 
@@ -59,6 +67,35 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
             case master_back_button:
                 this.returnToMainActivity();
                 break;
+            case computeBtn:
+                startCompute();
+        }
+    }
+
+    private void startCompute() {
+
+        if(connectedDeviceList.size()==0){
+            Toast.makeText(this, "No device connected", Toast.LENGTH_SHORT).show();
+        }
+        Toast.makeText(this, "Computing with "+connectedDeviceList.size()+" devices", Toast.LENGTH_SHORT).show();
+        int[][] matrix= TestMatrix.getMatrixA();
+        int rowsPerDevice= matrix.length/connectedDeviceList.size();
+        int currentRow=0;
+        for(ConnectedDevice device:connectedDeviceList){
+            ArrayList<Integer> rowsToCompute= new ArrayList<>();
+            for(int i=0;i<rowsPerDevice;i++){
+                rowsToCompute.add(currentRow);
+                currentRow++;
+            }
+
+            Payload payload= Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.COMPUTE_RESULT)
+                    .setParameters(matrix,matrix)
+                    .setParameters(rowsToCompute)
+                    .build());
+            Nearby.getConnectionsClient(this).sendPayload(device.getEndpointId(),payload);
+
+
+
         }
     }
 
@@ -136,6 +173,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                 new ArrayList<Integer>() {{
                     add(scan_button);
                     add(master_back_button);
+                    add(computeBtn);
                 }}
         );
     }
