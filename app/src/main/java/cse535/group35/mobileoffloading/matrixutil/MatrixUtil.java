@@ -29,7 +29,7 @@ public class MatrixUtil {
         return multiplicationResults;
     }
 
-    public JSONArray getMultiplicationResultJSONArray(List<MultiplicationResult> multiplicationResults) {
+    public static JSONArray getMultiplicationResultJSONArray(List<MultiplicationResult> multiplicationResults) {
         JSONArray multiplicationResultsJSONArray = new JSONArray();
         for(MultiplicationResult multiplicationResult : multiplicationResults) {
             multiplicationResultsJSONArray.put(multiplicationResult.toJSON());
