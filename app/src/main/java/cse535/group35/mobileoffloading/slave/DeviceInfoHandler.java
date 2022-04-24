@@ -31,8 +31,10 @@ public class DeviceInfoHandler {
 
     public static void updateBatteryLevelTextView(Activity activity) {
         TextView batteryLevelTextView = activity.findViewById(battery_level_textView);
-        batteryLevelTextView.setText(String.format(activity.getString(battery_level),
-                getCurrentBatteryLevel(activity)));
+        if(batteryLevelTextView != null) {
+            batteryLevelTextView.setText(String.format(activity.getString(battery_level),
+                    getCurrentBatteryLevel(activity)));
+        }
     }
 
     public static void updateLocationTextView(Activity activity) {
@@ -48,18 +50,24 @@ public class DeviceInfoHandler {
 
     public static void updateStatusTextView(Activity activity, SlaveStatus slaveStatus) {
         TextView statusTextView = activity.findViewById(status_textView);
-        statusTextView.setText(String.format(activity.getString(status), slaveStatus));
+        if(statusTextView != null) {
+            statusTextView.setText(String.format(activity.getString(status), slaveStatus));
+        }
     }
 
     public static void updateResultTextView(Activity activity, String matrixResult) {
         TextView resultTextView = activity.findViewById(result_textView);
         setResultTextViewVisibility(activity, View.VISIBLE);
-        resultTextView.setText(String.format(activity.getString(result), matrixResult));
+        if(resultTextView != null) {
+            resultTextView.setText(String.format(activity.getString(result), matrixResult));
+        }
     }
 
     public static void setResultTextViewVisibility(Activity activity, int visible) {
         TextView resultTextView = activity.findViewById(result_textView);
-        resultTextView.setVisibility(visible);
+        if(resultTextView != null) {
+            resultTextView.setVisibility(visible);
+        }
     }
 
     public static int getCurrentBatteryLevel(Activity activity) {
@@ -98,7 +106,9 @@ public class DeviceInfoHandler {
         }
 
         TextView locationTextView = activity.findViewById(location_textView);
-        locationTextView.setText(String.format(activity.getString(location), locationData[0], locationData[1]));
+        if(locationTextView != null) {
+            locationTextView.setText(String.format(activity.getString(location), locationData[0], locationData[1]));
+        }
     }
 
     private static void turnOnGPS(Activity activity) {
