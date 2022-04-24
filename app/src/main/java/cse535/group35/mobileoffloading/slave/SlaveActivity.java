@@ -123,7 +123,7 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
         } else {
             Nearby.getConnectionsClient(getApplicationContext())
                     .startAdvertising(
-                            this.slaveName, this.nearbyServiceId, new SlaveConnectionLifecycleCallback(getApplicationContext()), advertisingOptions)
+                            this.slaveName, this.nearbyServiceId, new SlaveConnectionLifecycleCallback(this), advertisingOptions)
                     .addOnSuccessListener(
                             (Void unused) -> AppUtility.createAndDisplayToast(this,
                                     "Started Advertising"))

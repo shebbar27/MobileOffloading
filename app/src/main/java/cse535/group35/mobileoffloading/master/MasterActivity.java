@@ -37,6 +37,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                 android.R.layout.simple_selectable_list_item);
         this.registerOnClickListenerCallBackForButtons();
         this.initializeDevicesListView();
+        runOnUiThread(() -> {});
     }
 
     @Override
@@ -79,7 +80,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
             DiscoveryOptions discoveryOptions =
                     new DiscoveryOptions.Builder().setStrategy(Strategy.P2P_CLUSTER).build();
             Nearby.getConnectionsClient(getApplicationContext())
-                    .startDiscovery(getResources().getString(nearbyServiceId), new MasterEndpointDiscoveryCallback(getApplicationContext(),nearbyDevicesAdapter), discoveryOptions)
+                    .startDiscovery(getResources().getString(nearbyServiceId), new MasterEndpointDiscoveryCallback(this, nearbyDevicesAdapter), discoveryOptions)
                     .addOnSuccessListener(
                             (Void unused) -> {
                                 // We're discovering!
@@ -109,7 +110,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
             String selected=(String)adapterView.getItemAtPosition(i);
             AppUtility.createAndDisplayToast(this, "Selected: " +selected);
             Nearby.getConnectionsClient(getApplicationContext())
-                    .requestConnection("MASTER", selected, new MasterConnectionLifecycleCallback(getApplicationContext()))
+                    .requestConnection("MASTER", selected, new MasterConnectionLifecycleCallback(this))
                     .addOnSuccessListener(
                             (Void unused) -> {
                                 // We successfully requested a connection. Now both sides
