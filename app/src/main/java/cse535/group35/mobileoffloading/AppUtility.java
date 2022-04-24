@@ -3,6 +3,7 @@ package cse535.group35.mobileoffloading;
 import static android.content.DialogInterface.*;
 import static cse535.group35.mobileoffloading.R.string.*;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
@@ -10,14 +11,13 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
 public class AppUtility {
 
-    public static void handleException(Exception e, AppCompatActivity activity) {
+    public static void handleException(Exception e, Activity activity) {
         e.printStackTrace();
         createExitAlertDialogWithConsentAndExit(
                 activity,
@@ -26,20 +26,20 @@ public class AppUtility {
                 alert_dialog_ok);
     }
 
-    public static void createConnectionConsentAlert(Context context,
+    public static void createConnectionConsentAlert(Activity activity,
                                                     String deviceName,
-                                                    OnClickListener positiveButtonOnClickCallBack,
+                                                     OnClickListener positiveButtonOnClickCallBack,
                                                     OnClickListener negativeButtonOnClickCallBack) {
-        createAlertDialogAndShow(context,
-                context.getString(connection_consent_alert_title),
-                String.format(Locale.US, context.getString(connection_consent_alert_message), deviceName),
-                context.getString(alert_dialog_yes),
+        createAlertDialogAndShow(activity,
+                activity.getString(connection_consent_alert_title),
+                String.format(Locale.US, activity.getString(connection_consent_alert_message), deviceName),
+                activity.getString(alert_dialog_yes),
                 positiveButtonOnClickCallBack,
-                context.getString(alert_dialog_no),
+                activity.getString(alert_dialog_no),
                 negativeButtonOnClickCallBack);
     }
 
-    public static void createTurnOnGPSAlert(AppCompatActivity activity,
+    public static void createTurnOnGPSAlert(Activity activity,
                                             OnClickListener positiveButtonOnClickCallBack,
                                             OnClickListener negativeButtonOnClickCallBack) {
         createAlertDialogAndShow(activity,
@@ -51,7 +51,7 @@ public class AppUtility {
                 negativeButtonOnClickCallBack);
     }
 
-    public static void exitApplicationWithDefaultAlert(AppCompatActivity activity) {
+    public static void exitApplicationWithDefaultAlert(Activity activity) {
         createExitAlertDialogWithConsentAndExit(activity,
                 exit_dialog_title,
                 exit_dialog_message,
@@ -59,7 +59,7 @@ public class AppUtility {
                 alert_dialog_no);
     }
 
-    public static void finishAndCloseCurrentActivityWithDefaultAlert(AppCompatActivity activity) {
+    public static void finishAndCloseCurrentActivityWithDefaultAlert(Activity activity) {
         createAlertDialogWithConsentAndFinishActivity(activity,
                 finish_activity_dialog_title,
                 finish_activity_dialog_message,
@@ -67,7 +67,7 @@ public class AppUtility {
                 alert_dialog_no);
     }
 
-    public static void createExitAlertDialogWithConsentAndExit(AppCompatActivity activity,
+    public static void createExitAlertDialogWithConsentAndExit(Activity activity,
                                                                int titleId,
                                                                int messageId,
                                                                int positiveButtonTextId) {
@@ -80,7 +80,7 @@ public class AppUtility {
                 (dialog, which) -> { });
     }
 
-    public static void createExitAlertDialogWithConsentAndExit(AppCompatActivity activity,
+    public static void createExitAlertDialogWithConsentAndExit(Activity activity,
                                                                int titleId,
                                                                int messageId,
                                                                int positiveButtonTextId,
@@ -94,7 +94,7 @@ public class AppUtility {
                 (dialog, which) -> dialog.cancel());
     }
 
-    public static void createAlertDialogWithConsentAndFinishActivity(AppCompatActivity activity,
+    public static void createAlertDialogWithConsentAndFinishActivity(Activity activity,
                                                                int titleId,
                                                                int messageId,
                                                                int positiveButtonTextId,
@@ -108,7 +108,7 @@ public class AppUtility {
                 (dialog, which) -> dialog.cancel());
     }
 
-    public static void createAlertDialogAndShow(AppCompatActivity activity,
+    public static void createAlertDialogAndShow(Activity activity,
                                                 int titleId,
                                                 int messageId,
                                                 int positiveButtonTextId,
@@ -124,7 +124,7 @@ public class AppUtility {
                 negativeButtonOnClickCallBack);
     }
 
-    public static void createAlertDialogAndShow(AppCompatActivity activity,
+    public static void createAlertDialogAndShow(Activity activity,
                                                 String title,
                                                 String message,
                                                 String positiveButtonText,
@@ -141,29 +141,9 @@ public class AppUtility {
 
         AlertDialog dialog =  dialogBuilder.create();
         dialog.show();
-
     }
 
-    public static void createAlertDialogAndShow(Context context,
-                                                String title,
-                                                String message,
-                                                String positiveButtonText,
-                                                OnClickListener positiveButtonOnClickCallBack,
-                                                String negativeButtonText,
-                                                OnClickListener negativeButtonOnClickCallBack) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
-        dialogBuilder.setTitle(title);
-        dialogBuilder.setMessage(message);
-        dialogBuilder.setPositiveButton(positiveButtonText, positiveButtonOnClickCallBack);
-        if(!negativeButtonText.equals(context.getString(empty_string))) {
-            dialogBuilder.setNegativeButton(negativeButtonText, negativeButtonOnClickCallBack);
-        }
-
-        AlertDialog dialog =  dialogBuilder.create();
-        dialog.show();
-    }
-
-    public static void registerButtonOnClickCallBack(AppCompatActivity activity,
+    public static void registerButtonOnClickCallBack(Activity activity,
                                                      View.OnClickListener listener,
                                                      ArrayList<Integer> buttonIds) {
         for(Integer id: buttonIds) {
@@ -178,14 +158,19 @@ public class AppUtility {
         }
     }
 
-    public static void createAndDisplayToast(AppCompatActivity activity,
+    public static void createAndDisplayToast(Activity activity,
                                              String message,
                                              int duration) {
         createAndDisplayToast(activity.getApplicationContext(), message, duration);
     }
 
-    public static void createAndDisplayToast(AppCompatActivity activity, String message) {
+    public static void createAndDisplayToast(Activity activity, String message) {
         createAndDisplayToast(activity.getApplicationContext(), message, Toast.LENGTH_SHORT);
+    }
+
+    public static void createAndDisplayToast(Context context,
+                                             String message) {
+        createAndDisplayToast(context, message, Toast.LENGTH_SHORT);
     }
 
     public static void createAndDisplayToast(Context context,
@@ -195,13 +180,7 @@ public class AppUtility {
         toast.show();
     }
 
-    public static void createAndDisplayToast(Context context,
-                                             String message) {
-        Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
-        toast.show();
-    }
-
-    private static void exitApplication(AppCompatActivity activity) {
+    private static void exitApplication(Activity activity) {
         activity.finishAndRemoveTask();
         System.exit(0);
     }

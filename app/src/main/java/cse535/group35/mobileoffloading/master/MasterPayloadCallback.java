@@ -1,6 +1,6 @@
 package cse535.group35.mobileoffloading.master;
 
-import android.content.Context;
+import android.app.Activity;
 
 import androidx.annotation.NonNull;
 
@@ -12,15 +12,15 @@ import cse535.group35.mobileoffloading.AppUtility;
 
 public class MasterPayloadCallback extends PayloadCallback {
 
-    private final Context context;
-    public MasterPayloadCallback(Context context){
-        this.context=context;
-
+    private final Activity activity;
+    public MasterPayloadCallback(Activity activity){
+        this.activity = activity;
     }
+
     @Override
     public void onPayloadReceived(@NonNull String s, @NonNull Payload payload) {
         String data = new String(payload.asBytes());
-        AppUtility.createAndDisplayToast(context, "Received message: "+data);
+        AppUtility.createAndDisplayToast(this.activity, "Received message: "+data);
     }
 
     @Override

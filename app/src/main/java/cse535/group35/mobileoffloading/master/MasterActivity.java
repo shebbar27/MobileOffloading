@@ -95,7 +95,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                 AppPermissionsManager.checkForBluetoothEnabledAndTakeAction(MasterActivity.this,
                         REQUEST_ENABLE_BT);
                 Nearby.getConnectionsClient(getApplicationContext())
-                        .requestConnection("MASTER", selectedDevice, new MasterConnectionLifecycleCallback(getApplicationContext(),connectedDevicesAdaptor))
+                        .requestConnection("MASTER", selectedDevice, new MasterConnectionLifecycleCallback(MasterActivity.this,connectedDevicesAdaptor))
                         .addOnSuccessListener(
                                 (Void unused) -> {
                                     dialogInterface.cancel();
@@ -115,7 +115,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
             DiscoveryOptions discoveryOptions =
                     new DiscoveryOptions.Builder().setStrategy(Strategy.P2P_CLUSTER).build();
             Nearby.getConnectionsClient(getApplicationContext())
-                    .startDiscovery(getResources().getString(nearbyServiceId), new MasterEndpointDiscoveryCallback(getApplicationContext(),nearbyDevicesAdapter), discoveryOptions)
+                    .startDiscovery(getResources().getString(nearbyServiceId), new MasterEndpointDiscoveryCallback(this, nearbyDevicesAdapter), discoveryOptions)
                     .addOnSuccessListener(
                             (Void unused) -> {
                                 // We're discovering!

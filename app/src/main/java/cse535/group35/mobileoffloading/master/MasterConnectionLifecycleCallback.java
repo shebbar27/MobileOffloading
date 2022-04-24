@@ -1,5 +1,6 @@
 package cse535.group35.mobileoffloading.master;
 
+import android.app.Activity;
 import android.content.Context;
 import android.widget.ArrayAdapter;
 
@@ -17,29 +18,28 @@ import cse535.group35.mobileoffloading.RequestType;
 
 public class MasterConnectionLifecycleCallback extends ConnectionLifecycleCallback {
 
-    private final Context context;
+    private final Activity activity;
     private ArrayAdapter<String> connectedDevicesAdaptor;
-    public MasterConnectionLifecycleCallback(Context context, ArrayAdapter<String> connectedDevicesAdaptor){
-        this.context=context;
+    public MasterConnectionLifecycleCallback(Activity activity, ArrayAdapter<String> connectedDevicesAdaptor){
+        this.activity = activity;
         this.connectedDevicesAdaptor=connectedDevicesAdaptor;
-
     }
     @Override
     public void onConnectionInitiated(@NonNull String s, @NonNull ConnectionInfo connectionInfo) {
-        AppUtility.createAndDisplayToast(context, "Connection Initiated with " + s);
-        Nearby.getConnectionsClient(context).acceptConnection(s, new MasterPayloadCallback(context));
+        AppUtility.createAndDisplayToast(this.activity, "Connection Initiated with " + s);
+        Nearby.getConnectionsClient(this.activity).acceptConnection(s, new MasterPayloadCallback(this.activity));
     }
 
     @Override
     public void onConnectionResult(@NonNull String endpointId, @NonNull ConnectionResolution connectionResolution) {
         connectedDevicesAdaptor.add(endpointId);
         Payload payload= Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.DEVICE_STATE).build());
-        Nearby.getConnectionsClient(context).sendPayload(endpointId, payload);
-        AppUtility.createAndDisplayToast(context, "Payload sent");
+        Nearby.getConnectionsClient(this.activity).sendPayload(endpointId, payload);
+        AppUtility.createAndDisplayToast(this.activity, "Payload sent");
     }
 
     @Override
     public void onDisconnected(@NonNull String s) {
-        AppUtility.createAndDisplayToast(context, "Disconnected");
+        AppUtility.createAndDisplayToast(this.activity, "Disconnected");
     }
 }

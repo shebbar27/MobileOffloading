@@ -1,6 +1,6 @@
 package cse535.group35.mobileoffloading.slave;
 
-import android.content.Context;
+import android.app.Activity;
 
 import androidx.annotation.NonNull;
 
@@ -13,19 +13,19 @@ import cse535.group35.mobileoffloading.AppUtility;
 
 public class SlaveConnectionLifecycleCallback extends ConnectionLifecycleCallback {
 
-    private final Context context;
-    public SlaveConnectionLifecycleCallback(Context context){
-        this.context=context;
+    private final Activity activity;
+    public SlaveConnectionLifecycleCallback(Activity activity){
+        this.activity = activity;
     }
 
     @Override
     public void onConnectionInitiated(@NonNull String endPointId, @NonNull ConnectionInfo connectionInfo) {
-        AppUtility.createAndDisplayToast(context,
+        AppUtility.createAndDisplayToast(activity,
                 "Accepting Connection from " + connectionInfo.getEndpointName());
-        AppUtility.createConnectionConsentAlert(context,
+        AppUtility.createConnectionConsentAlert(activity,
                 endPointId,
-                (dialog, which) -> Nearby.getConnectionsClient(context)
-                        .acceptConnection(endPointId, new SlavePayloadCallback(context)),
+                (dialog, which) -> Nearby.getConnectionsClient(activity.getApplicationContext())
+                        .acceptConnection(endPointId, new SlavePayloadCallback(activity)),
                 (dialog, which) -> dialog.cancel()
         );
     }
