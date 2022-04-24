@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.nearby.Nearby;
@@ -24,6 +25,10 @@ import com.google.android.gms.nearby.connection.Strategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
 
 import cse535.group35.mobileoffloading.AppUtility;
 import cse535.group35.mobileoffloading.AppPermissionsManager;
@@ -36,9 +41,11 @@ import cse535.group35.mobileoffloading.TestMatrix;
 public class MasterActivity extends AppCompatActivity implements View.OnClickListener {
     public ArrayAdapter<String> nearbyDevicesAdapter;
     public ArrayAdapter<String> connectedDevicesAdaptor;
-    public List<ConnectedDevice> connectedDeviceList;
-    
+    public static List<ConnectedDevice> connectedDeviceList;
+
+    private int[][] matrixResult = new int[50][50];
     private Button computeButton;
+    private TextView resultView;
     private static final int REQUEST_PERMISSIONS_CODE = 27;
     private static final int REQUEST_ENABLE_BT = 137;
 
@@ -53,7 +60,37 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
         this.registerOnClickListenerCallBackForButtons();
         this.initializeDevicesListView();
         computeButton= (Button) findViewById(computeBtn);
+
         connectedDeviceList= new ArrayList<>();
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    boolean isCompleted = true;
+                    for(ConnectedDevice connectedDevice : MasterActivity.connectedDeviceList) {
+                        if(!connectedDevice.isCompleted()) {
+                            isCompleted = false;
+                            break;
+                        }
+                    }
+                    if(isCompleted) {
+                        break;
+                    }
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println("COMPLETED");
+                runOnUiThread(()->{
+                    resultView.setText("COMPLETED");
+                    Toast.makeText(MasterActivity.this, "COMPLETED", Toast.LENGTH_SHORT).show();
+                });
+            }
+        };
+        executorService.execute(runnable);
         
 
     }
@@ -76,18 +113,20 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
 
         if(connectedDeviceList.size()==0){
             Toast.makeText(this, "No device connected", Toast.LENGTH_SHORT).show();
+            return;
         }
         Toast.makeText(this, "Computing with "+connectedDeviceList.size()+" devices", Toast.LENGTH_SHORT).show();
         int[][] matrix= TestMatrix.getMatrixA();
-        int rowsPerDevice= matrix.length/connectedDeviceList.size();
+        int rowsPerDevice= (matrix.length/connectedDeviceList.size())+1;
         int currentRow=0;
         for(ConnectedDevice device:connectedDeviceList){
             ArrayList<Integer> rowsToCompute= new ArrayList<>();
             for(int i=0;i<rowsPerDevice;i++){
                 rowsToCompute.add(currentRow);
+                if(currentRow==matrix.length-1) break;
                 currentRow++;
             }
-
+            device.setComputeRows(rowsToCompute);
             Payload payload= Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.COMPUTE_RESULT)
                     .setParameters(matrix,matrix)
                     .setParameters(rowsToCompute)
@@ -136,7 +175,10 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                 AppPermissionsManager.checkForBluetoothEnabledAndTakeAction(MasterActivity.this,
                         REQUEST_ENABLE_BT);
                 Nearby.getConnectionsClient(getApplicationContext())
-                        .requestConnection("MASTER", selectedDevice, new MasterConnectionLifecycleCallback(MasterActivity.this,connectedDevicesAdaptor,connectedDeviceList))
+                        .requestConnection("MASTER", selectedDevice, new MasterConnectionLifecycleCallback(MasterActivity.this,
+                                connectedDevicesAdaptor,
+                                connectedDeviceList,
+                                matrixResult))
                         .addOnSuccessListener(
                                 (Void unused) -> {
                                     dialogInterface.cancel();

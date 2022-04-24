@@ -24,15 +24,17 @@ public class MasterConnectionLifecycleCallback extends ConnectionLifecycleCallba
     private final Activity activity;
     private ArrayAdapter<String> connectedDevicesAdaptor;
     private List<ConnectedDevice> connectedDeviceList;
-    public MasterConnectionLifecycleCallback(Activity activity, ArrayAdapter<String> connectedDevicesAdaptor, List<ConnectedDevice> connectedDeviceList){
+    private int[][] matrixResult;
+    public MasterConnectionLifecycleCallback(Activity activity, ArrayAdapter<String> connectedDevicesAdaptor, List<ConnectedDevice> connectedDeviceList, int[][] matrixResult){
         this.activity = activity;
         this.connectedDevicesAdaptor=connectedDevicesAdaptor;
         this.connectedDeviceList=connectedDeviceList;
+        this.matrixResult=matrixResult;
     }
     @Override
     public void onConnectionInitiated(@NonNull String s, @NonNull ConnectionInfo connectionInfo) {
         AppUtility.createAndDisplayToast(this.activity, "Connection Initiated with " + s);
-        Nearby.getConnectionsClient(this.activity).acceptConnection(s, new MasterPayloadCallback(this.activity));
+        Nearby.getConnectionsClient(this.activity).acceptConnection(s, new MasterPayloadCallback(this.activity,matrixResult,connectedDeviceList));
     }
 
     @Override

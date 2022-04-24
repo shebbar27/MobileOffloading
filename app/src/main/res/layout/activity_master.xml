@@ -63,4 +63,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/devices_listview" />
 
+    <TextView
+        android:id="@+id/resultView"
+        android:layout_width="179dp"
+        android:layout_height="52dp"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="116dp"
+        tools:layout_editor_absoluteY="571dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
