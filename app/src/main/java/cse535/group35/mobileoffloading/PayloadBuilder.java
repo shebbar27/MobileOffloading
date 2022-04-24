@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 public class PayloadBuilder {
     public static final String requestTypeKey="requestType";
@@ -20,13 +21,13 @@ public class PayloadBuilder {
         return this;
     }
 
-    public PayloadBuilder setParameters(float batteryLevel, float latitude, float longitude){
+    public PayloadBuilder setParameters(int batteryLevel, double latitude, double longitude){
         JSONObject body = new JSONObject();
 
         try {
             body.put(batteryLevelKey, batteryLevel);
-            body.put(latitudeKey, latitude);
-            body.put(longitudeKey, longitude);
+            body.put(latitudeKey, String.format(Locale.US, "%1$.3f", latitude));
+            body.put(longitudeKey, String.format(Locale.US, "%1$.3f", longitude));
         } catch (JSONException e) {
             e.printStackTrace();
         }

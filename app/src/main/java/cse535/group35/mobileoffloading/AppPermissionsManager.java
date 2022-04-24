@@ -36,7 +36,7 @@ public class AppPermissionsManager {
         return permissions;
     }
 
-    public static void requestAllPermissions(AppCompatActivity activity, int requestPermissionCode) {
+    public static void requestAllPermissions(Activity activity, int requestPermissionCode) {
         if(!areAllPermissionsGranted(activity)) {
             ActivityCompat.requestPermissions(activity,
                     getAllPermissions().toArray(new String[0]),
@@ -44,7 +44,7 @@ public class AppPermissionsManager {
         }
     }
 
-    public static boolean areAllPermissionsGranted(AppCompatActivity activity) {
+    public static boolean areAllPermissionsGranted(Activity activity) {
         for (String permission : getAllPermissions()) {
             if (ContextCompat.checkSelfPermission(activity, permission)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -55,7 +55,7 @@ public class AppPermissionsManager {
         return true;
     }
 
-    public static void checkForBluetoothEnabledAndDisplayAlert(AppCompatActivity activity,
+    public static void checkForBluetoothEnabledAndDisplayAlert(Activity activity,
                                                                     int enableRequestCode,
                                                                     int resultCode) {
         if (resultCode == Activity.RESULT_OK) {
@@ -67,7 +67,7 @@ public class AppPermissionsManager {
 
     @SuppressWarnings("deprecation")
     @SuppressLint("MissingPermission")
-    public static void checkForBluetoothEnabledAndTakeAction(AppCompatActivity activity, int enableRequestCode) {
+    public static void checkForBluetoothEnabledAndTakeAction(Activity activity, int enableRequestCode) {
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
             displayBluetoothNotSupportedAlertAndExitApp(activity);
@@ -81,13 +81,13 @@ public class AppPermissionsManager {
         }
     }
 
-    private static void checkForBluetoothPermissionsAndShowAlert(AppCompatActivity activity) {
+    private static void checkForBluetoothPermissionsAndShowAlert(Activity activity) {
         if(!areAllPermissionsGranted(activity)) {
             displayBluetoothPermissionDeniedAlertAndExitApp(activity);
         }
     }
 
-    private static void displayBluetoothEnabledAlert(AppCompatActivity activity) {
+    private static void displayBluetoothEnabledAlert(Activity activity) {
         AppUtility.createAlertDialogAndShow(activity,
                 bluetooth_enabled_alert_title,
                 bluetooth_enabled_alert_message,
@@ -98,21 +98,21 @@ public class AppPermissionsManager {
         );
     }
 
-    private static void displayBluetoothNotEnabledToastAndRetry(AppCompatActivity activity, int enableRequestCode) {
+    private static void displayBluetoothNotEnabledToastAndRetry(Activity activity, int enableRequestCode) {
         AppUtility.createAndDisplayToast(activity,
                 "Bluetooth is not enabled on Device! Trying to enabled bluetooth.",
                 Toast.LENGTH_SHORT);
         checkForBluetoothEnabledAndTakeAction(activity, enableRequestCode);
     }
 
-    private static void displayBluetoothNotSupportedAlertAndExitApp(AppCompatActivity activity) {
+    private static void displayBluetoothNotSupportedAlertAndExitApp(Activity activity) {
         AppUtility.createExitAlertDialogWithConsentAndExit(activity,
                 bluetooth_not_supported_alert_title,
                 bluetooth_not_supported_alert_message,
                 alert_dialog_ok);
     }
 
-    private static void displayBluetoothPermissionDeniedAlertAndExitApp(AppCompatActivity activity) {
+    private static void displayBluetoothPermissionDeniedAlertAndExitApp(Activity activity) {
         AppUtility.createExitAlertDialogWithConsentAndExit(activity,
                 bluetooth_permission_denied_alert_title,
                 bluetooth_permission_denied_alert_message,

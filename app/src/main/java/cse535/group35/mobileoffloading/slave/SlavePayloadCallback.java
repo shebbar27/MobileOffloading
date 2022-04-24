@@ -30,9 +30,12 @@ public class SlavePayloadCallback extends PayloadCallback {
             try {
                 JSONObject reader = new JSONObject(data);
 
+                double[] locationData = DeviceInfoHandler.getLastKnownLocation(activity);
                 if(reader.getString(PayloadBuilder.requestTypeKey).equals(RequestType.DEVICE_STATE.toString())){
                     Payload responsePayload=Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.DEVICE_STATE)
-                            .setParameters(10,100,122)
+                            .setParameters(DeviceInfoHandler.getCurrentBatteryLevel(this.activity),
+                                    locationData[0],
+                                    locationData[1])
                             .build());
                     Nearby.getConnectionsClient(activity.getApplicationContext()).sendPayload(endpointId, responsePayload);
                     AppUtility.createAndDisplayToast(activity.getApplicationContext(), "Sent payload");
