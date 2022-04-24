@@ -22,6 +22,7 @@ public class MatrixUtil {
     }
 
     public List<MultiplicationResult> getMultiplicationResult(List<Integer> idxsToCalculate) {
+        LOGGER.log(Level.WARNING, "Starting multiplication");
         List<MultiplicationResult> multiplicationResults = new ArrayList<>();
         for(int idxToCalculate : idxsToCalculate) {
             multiplicationResults.add(getMultiplicationResultForRow(idxToCalculate));

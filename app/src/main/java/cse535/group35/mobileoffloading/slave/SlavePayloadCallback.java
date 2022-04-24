@@ -1,6 +1,7 @@
 package cse535.group35.mobileoffloading.slave;
 
 import android.app.Activity;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -31,12 +32,15 @@ public class SlavePayloadCallback extends PayloadCallback {
     @Override
     public void onPayloadReceived(@NonNull String endpointId, @NonNull Payload payload) {
         String data = new String(payload.asBytes());
-        AppUtility.createAndDisplayToast(activity, "Received message: " + data);
             try {
                 JSONObject reader = new JSONObject(data);
+                //AppUtility.createAndDisplayToast(activity, "Received message: " + reader.getString(PayloadBuilder.requestTypeKey));
+                AppUtility.createAndDisplayToast(activity, "Received message: " + reader.optString(PayloadBuilder.requestTypeKey, "not here"));
 
-                double[] locationData = DeviceInfoHandler.getLastKnownLocation(activity);
+
                 if(reader.getString(PayloadBuilder.requestTypeKey).equals(RequestType.DEVICE_STATE.toString())){
+
+                    double[] locationData = DeviceInfoHandler.getLastKnownLocation(activity);
                     Payload responsePayload=Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.DEVICE_STATE)
                             .setParameters(DeviceInfoHandler.getCurrentBatteryLevel(this.activity),
                                     locationData[0],
@@ -47,12 +51,14 @@ public class SlavePayloadCallback extends PayloadCallback {
                 }
 
                 if(reader.getString(PayloadBuilder.requestTypeKey).equals(RequestType.COMPUTE_RESULT.toString())){
-                     JSONArray matrixAArr1 = reader.getJSONArray("matrixA"); //{{1,2},{3,4}}
+                    AppUtility.createAndDisplayToast(activity, "Compute: " + data);
+
+                    JSONArray matrixAArr1 = reader.getJSONArray("matrixA"); //{{1,2},{3,4}}
                     int[][] A = new int[matrixAArr1.length()][matrixAArr1.length()];
                     for(int i = 0; i < matrixAArr1.length(); i++) {
                         JSONArray matrixAArrRow = matrixAArr1.getJSONArray(i);
                         for(int j = 0; j < matrixAArr1.length(); j++) {
-                            A[i][j] = matrixAArrRow.getInt(j);
+                            A[i][j] = Integer.parseInt(matrixAArrRow.get(j).toString());
                         }
                     }
                     JSONArray matrixAArr2 = reader.getJSONArray("matrixB");
@@ -60,21 +66,31 @@ public class SlavePayloadCallback extends PayloadCallback {
                     for(int i = 0; i < matrixAArr2.length(); i++) {
                         JSONArray matrixAArrRow = matrixAArr2.getJSONArray(i);
                         for(int j = 0; j < matrixAArr2.length(); j++) {
-                            B[i][j] = matrixAArrRow.getInt(j);
+                            B[i][j] = Integer.parseInt(matrixAArrRow.get(j).toString());
                         }
                     }
 
-                    List<Integer> idxToCompute = new ArrayList<>();
-                    reader.getJSONArray("rowsToCompute");
 
+                    List<Integer> idxToCompute = new ArrayList<>();
+                    JSONArray rows = reader.getJSONArray("rowsToCompute");
+                    for(int i=0;i<rows.length();i++){
+                        idxToCompute.add(rows.getInt(i));
+                    }
+
+                    AppUtility.createAndDisplayToast(activity, "After extract: " + idxToCompute);
+                    List<MatrixUtil.MultiplicationResult> res=new MatrixUtil(A, B).getMultiplicationResult(idxToCompute);
+                    AppUtility.createAndDisplayToast(activity.getApplicationContext(), "multiply almost"+res.size());
 
                     Payload responsePayload=Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.COMPUTE_RESULT)
-                            .setParameters(new MatrixUtil(A, B).getMultiplicationResult(idxToCompute))
+                            .setParameters(res)
                                     .build());
+                    AppUtility.createAndDisplayToast(activity.getApplicationContext(), "Sent almost");
                     Nearby.getConnectionsClient(activity.getApplicationContext()).sendPayload(endpointId, responsePayload);
                     AppUtility.createAndDisplayToast(activity.getApplicationContext(), "Sent payload");
                 }
             } catch (JSONException e) {
+                AppUtility.createAndDisplayToast(activity, "Exception"+e.getMessage() );
+                Log.d("TAG", "onPayloadReceived: ",e);
                 e.printStackTrace();
             }
         }

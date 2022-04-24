@@ -1,5 +1,6 @@
 package cse535.group35.mobileoffloading;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -68,19 +69,24 @@ public class PayloadBuilder {
         JSONObject payload = new JSONObject();
 
         try {
+            payload.put(requestTypeKey, requestType);
         if(requestType==RequestType.COMPUTE_RESULT){
+
             if(matrixResult!=null){
                 payload.put("resultMatrix",matrixResult);
             }
             else {
-                payload.put("matrixA", matrixA);
-                payload.put("matrixB", matrixB);
-                payload.put("rowsToCompute", rows);
+                payload.put("matrixA", convertToJSON(matrixA));
+                payload.put("matrixB", convertToJSON(matrixB));
+                JSONArray rowToComputeArr = new JSONArray();
+                for(int num : rows) {
+                    rowToComputeArr.put(num);
+                }
+                payload.put("rowsToCompute", rowToComputeArr);
             }
 
         }
         else if(requestType==RequestType.DEVICE_STATE){
-            payload.put(requestTypeKey, requestType);
             if(parameters != null){
                 payload.put(parametersKey, parameters);
             }
@@ -92,5 +98,17 @@ public class PayloadBuilder {
         }
 
         return payload.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static JSONArray convertToJSON(int[][] mat) {
+        JSONArray jsonArray = new JSONArray();
+        for(int[] row : mat) {
+            JSONArray rowArr = new JSONArray();
+            for(int num : row) {
+                rowArr.put(num);
+            }
+            jsonArray.put(rowArr);
+        }
+        return jsonArray;
     }
 }

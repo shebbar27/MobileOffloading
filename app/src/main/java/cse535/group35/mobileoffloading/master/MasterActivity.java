@@ -85,7 +85,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 System.out.println("COMPLETED");
                 runOnUiThread(()->{
-                    resultView.setText("COMPLETED");
+                    //resultView.setText("COMPLETED");
                     Toast.makeText(MasterActivity.this, "COMPLETED", Toast.LENGTH_SHORT).show();
                 });
             }

@@ -3,11 +3,9 @@ package cse535.group35.mobileoffloading;
 public class TestMatrix {
 
     public static int[][] getMatrixA(){
-
-        return null;
+        return new int[][] {{1, 2}, {3, 4}};
     }
     public static int[][] getMatrixB(){
-
-        return null;
+        return new int[][] {{1, 2}, {3, 4}};
     }
 }
