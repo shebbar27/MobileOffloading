@@ -12,7 +12,10 @@ import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
 import com.google.android.gms.nearby.connection.ConnectionResolution;
 import com.google.android.gms.nearby.connection.Payload;
 
+import java.util.List;
+
 import cse535.group35.mobileoffloading.AppUtility;
+import cse535.group35.mobileoffloading.ConnectedDevice;
 import cse535.group35.mobileoffloading.PayloadBuilder;
 import cse535.group35.mobileoffloading.RequestType;
 
@@ -20,9 +23,11 @@ public class MasterConnectionLifecycleCallback extends ConnectionLifecycleCallba
 
     private final Activity activity;
     private ArrayAdapter<String> connectedDevicesAdaptor;
-    public MasterConnectionLifecycleCallback(Activity activity, ArrayAdapter<String> connectedDevicesAdaptor){
+    private List<ConnectedDevice> connectedDeviceList;
+    public MasterConnectionLifecycleCallback(Activity activity, ArrayAdapter<String> connectedDevicesAdaptor, List<ConnectedDevice> connectedDeviceList){
         this.activity = activity;
         this.connectedDevicesAdaptor=connectedDevicesAdaptor;
+        this.connectedDeviceList=connectedDeviceList;
     }
     @Override
     public void onConnectionInitiated(@NonNull String s, @NonNull ConnectionInfo connectionInfo) {
@@ -33,6 +38,8 @@ public class MasterConnectionLifecycleCallback extends ConnectionLifecycleCallba
     @Override
     public void onConnectionResult(@NonNull String endpointId, @NonNull ConnectionResolution connectionResolution) {
         connectedDevicesAdaptor.add(endpointId);
+        ConnectedDevice newDevice= new ConnectedDevice(endpointId);
+        connectedDeviceList.add(newDevice);
         Payload payload= Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.DEVICE_STATE).build());
         Nearby.getConnectionsClient(this.activity).sendPayload(endpointId, payload);
         AppUtility.createAndDisplayToast(this.activity, "Payload sent");

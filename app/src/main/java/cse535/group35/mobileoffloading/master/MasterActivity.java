@@ -21,16 +21,18 @@ import com.google.android.gms.nearby.connection.DiscoveryOptions;
 import com.google.android.gms.nearby.connection.Strategy;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cse535.group35.mobileoffloading.AppUtility;
 import cse535.group35.mobileoffloading.AppPermissionsManager;
+import cse535.group35.mobileoffloading.ConnectedDevice;
 import cse535.group35.mobileoffloading.MainActivity;
 import cse535.group35.mobileoffloading.R;
 
 public class MasterActivity extends AppCompatActivity implements View.OnClickListener {
     public ArrayAdapter<String> nearbyDevicesAdapter;
     public ArrayAdapter<String> connectedDevicesAdaptor;
-
+    public List<ConnectedDevice> connectedDeviceList;
     private static final int REQUEST_PERMISSIONS_CODE = 27;
     private static final int REQUEST_ENABLE_BT = 137;
 
@@ -44,6 +46,8 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                 android.R.layout.simple_selectable_list_item);
         this.registerOnClickListenerCallBackForButtons();
         this.initializeDevicesListView();
+        connectedDeviceList= new ArrayList<>();
+
     }
 
     @Override
@@ -95,7 +99,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                 AppPermissionsManager.checkForBluetoothEnabledAndTakeAction(MasterActivity.this,
                         REQUEST_ENABLE_BT);
                 Nearby.getConnectionsClient(getApplicationContext())
-                        .requestConnection("MASTER", selectedDevice, new MasterConnectionLifecycleCallback(MasterActivity.this,connectedDevicesAdaptor))
+                        .requestConnection("MASTER", selectedDevice, new MasterConnectionLifecycleCallback(MasterActivity.this,connectedDevicesAdaptor,connectedDeviceList))
                         .addOnSuccessListener(
                                 (Void unused) -> {
                                     dialogInterface.cancel();
