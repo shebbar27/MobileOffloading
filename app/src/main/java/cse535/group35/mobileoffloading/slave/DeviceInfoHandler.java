@@ -12,12 +12,12 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.BatteryManager;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import java.util.Arrays;
 import java.util.Locale;
 
 import cse535.group35.mobileoffloading.AppUtility;
@@ -44,6 +44,22 @@ public class DeviceInfoHandler {
         else {
             updateLocationTextView(activity, locationManager);
         }
+    }
+
+    public static void updateStatusTextView(Activity activity, SlaveStatus slaveStatus) {
+        TextView statusTextView = activity.findViewById(status_textView);
+        statusTextView.setText(String.format(activity.getString(status), slaveStatus));
+    }
+
+    public static void updateResultTextView(Activity activity, String matrixResult) {
+        TextView resultTextView = activity.findViewById(result_textView);
+        setResultTextViewVisibility(activity, View.VISIBLE);
+        resultTextView.setText(String.format(activity.getString(result), matrixResult));
+    }
+
+    public static void setResultTextViewVisibility(Activity activity, int visible) {
+        TextView resultTextView = activity.findViewById(result_textView);
+        resultTextView.setVisibility(visible);
     }
 
     public static int getCurrentBatteryLevel(Activity activity) {
