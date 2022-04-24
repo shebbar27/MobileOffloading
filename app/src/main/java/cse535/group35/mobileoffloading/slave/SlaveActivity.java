@@ -101,6 +101,9 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
     private void updateDeviceInfo() {
         DeviceInfoHandler.updateBatteryLevelTextView(this);
         DeviceInfoHandler.updateLocationTextView(this);
+        DeviceInfoHandler.updateStatusTextView(this, SlaveStatus.IDLE);
+        DeviceInfoHandler.updateResultTextView(this, getString(empty_string));
+        DeviceInfoHandler.setResultTextViewVisibility(this, View.INVISIBLE);
     }
 
     private void startOrStopAdvertising()
@@ -136,10 +139,5 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
 
     private void returnToMainActivity() {
         AppUtility.finishAndCloseCurrentActivityWithDefaultAlert(this);
-    }
-
-    public void updateBatteryLevelTextView(String slaveStatus) {
-        TextView statusTextView = this.findViewById(status_textView);
-        statusTextView.setText(String.format(this.getString(status), slaveStatus));
     }
 }

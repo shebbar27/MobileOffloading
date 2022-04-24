@@ -47,7 +47,8 @@
     <string name="battery_level" formatted="false">Battery Level: %1$d</string>
     <string name="location" formatted="false">Location: Latitude=%1$s Longitude=%2$s</string>
     <string name="device_info">Device Info</string>
-    <string name="status">Status: %1$s</string>
+    <string name="status" formatted="false">Status: %1$s</string>
+    <string name="result" formatted="false">Result: %1$s</string>
     <string name="update_device_info">Update Device Info</string>
     <string name="computeButtonText">Compute</string>
 </resources>
