@@ -5,7 +5,10 @@ import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+
+import cse535.group35.mobileoffloading.matrixutil.MatrixUtil;
 
 public class PayloadBuilder {
     public static final String requestTypeKey="requestType";
@@ -14,10 +17,15 @@ public class PayloadBuilder {
     public static final String longitudeKey="longitude";
     public static final String parametersKey="parameters";
 
+
     private RequestType requestType;
     private String parameters;
     private int[][] matrixA,matrixB;
     private ArrayList<Integer> rows;
+    private int[][] result;
+    private List<MatrixUtil.MultiplicationResult> matrixResult;
+    private int index;
+
 
     public PayloadBuilder setRequestType(RequestType requestType){
         this.requestType = requestType;
@@ -49,14 +57,27 @@ public class PayloadBuilder {
         return this;
     }
 
+    public PayloadBuilder setParameters(List<MatrixUtil.MultiplicationResult> multiplicationResultList){
+        this.parameters = MatrixUtil.getMultiplicationResultJSONArray(multiplicationResultList).toString();
+        return this;
+    }
+
+
+
     public byte[] build(){
         JSONObject payload = new JSONObject();
 
         try {
         if(requestType==RequestType.COMPUTE_RESULT){
-            payload.put("matrixA",matrixA);
-            payload.put("matrixB",matrixB);
-            payload.put("rowsToCompute",rows);
+            if(matrixResult!=null){
+                payload.put("resultMatrix",matrixResult);
+            }
+            else {
+                payload.put("matrixA", matrixA);
+                payload.put("matrixB", matrixB);
+                payload.put("rowsToCompute", rows);
+            }
+
         }
         else if(requestType==RequestType.DEVICE_STATE){
             payload.put(requestTypeKey, requestType);

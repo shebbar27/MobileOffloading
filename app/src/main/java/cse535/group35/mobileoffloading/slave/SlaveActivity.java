@@ -101,6 +101,9 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
     private void updateDeviceInfo() {
         DeviceInfoHandler.updateBatteryLevelTextView(this);
         DeviceInfoHandler.updateLocationTextView(this);
+        DeviceInfoHandler.updateStatusTextView(this, SlaveStatus.IDLE);
+        DeviceInfoHandler.updateResultTextView(this, getString(empty_string));
+        DeviceInfoHandler.setResultTextViewVisibility(this, View.INVISIBLE);
     }
 
     private void startOrStopAdvertising()
