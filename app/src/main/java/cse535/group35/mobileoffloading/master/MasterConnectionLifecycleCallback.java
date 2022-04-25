@@ -1,7 +1,6 @@
 package cse535.group35.mobileoffloading.master;
 
 import android.app.Activity;
-import android.content.Context;
 import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;

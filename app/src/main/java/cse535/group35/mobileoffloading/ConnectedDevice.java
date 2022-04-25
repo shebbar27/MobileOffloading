@@ -3,6 +3,15 @@ package cse535.group35.mobileoffloading;
 import java.util.ArrayList;
 
 public class ConnectedDevice {
+
+    private String endpointId;
+    private int deviceState;
+    private boolean isBusy;
+    private DeviceLocation deviceLocation;
+    private int batteryState;
+    private ArrayList<Integer> computeRows;
+    private boolean isCompleted;
+
     public ConnectedDevice(String endpointId){
         setEndpointId(endpointId);
         setCompleted(false);
@@ -63,19 +72,8 @@ public class ConnectedDevice {
         isCompleted = completed;
     }
 
-    public class DeviceLocation{
+    public class DeviceLocation {
         private double latitude;
         private double longitude;
     }
-    private String endpointId;
-    private int deviceState;
-    private boolean isBusy;
-    private DeviceLocation deviceLocation;
-    private int batteryState;
-    private ArrayList<Integer> computeRows;
-    private boolean isCompleted;
-
-
-
-
 }

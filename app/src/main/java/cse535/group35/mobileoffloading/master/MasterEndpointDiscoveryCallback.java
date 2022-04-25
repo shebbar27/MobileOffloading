@@ -50,6 +50,7 @@ public class MasterEndpointDiscoveryCallback extends EndpointDiscoveryCallback {
             while(completedConnectedDevice == null) {
                 Thread.sleep(3000);
             }
+
             connectedDevice.setCompleted(false);
             connectedDevice.setComputeRows(computeRows);
 

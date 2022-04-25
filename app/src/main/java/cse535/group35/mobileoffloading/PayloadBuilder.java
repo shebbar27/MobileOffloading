@@ -12,6 +12,7 @@ import java.util.Locale;
 import cse535.group35.mobileoffloading.matrixutil.MatrixUtil;
 
 public class PayloadBuilder {
+
     public static final String requestTypeKey="requestType";
     public static final String batteryLevelKey="batteryLevel";
     public static final String latitudeKey="latitude";
@@ -26,7 +27,6 @@ public class PayloadBuilder {
     private int[][] result;
     private List<MatrixUtil.MultiplicationResult> matrixResult;
     private int index;
-
 
     public PayloadBuilder setRequestType(RequestType requestType){
         this.requestType = requestType;
@@ -53,6 +53,7 @@ public class PayloadBuilder {
         this.matrixB=matrixB;
         return this;
     }
+
     public PayloadBuilder setParameters(ArrayList<Integer> rows){
         this.rows=rows;
         return this;
@@ -63,36 +64,30 @@ public class PayloadBuilder {
         return this;
     }
 
-
-
     public byte[] build(){
         JSONObject payload = new JSONObject();
 
         try {
             payload.put(requestTypeKey, requestType);
-        if(requestType==RequestType.COMPUTE_RESULT){
-
-            if(matrixResult!=null){
-                payload.put("resultMatrix",MatrixUtil.getMultiplicationResultJSONArray(this.matrixResult).toString());
-            }
-            else {
-                payload.put("matrixA", convertToJSON(matrixA));
-                payload.put("matrixB", convertToJSON(matrixB));
-                JSONArray rowToComputeArr = new JSONArray();
-                for(int num : rows) {
-                    rowToComputeArr.put(num);
+            if(requestType==RequestType.COMPUTE_RESULT){
+                if(matrixResult!=null){
+                    payload.put("resultMatrix",MatrixUtil.getMultiplicationResultJSONArray(this.matrixResult).toString());
                 }
-                payload.put("rowsToCompute", rowToComputeArr);
+                else {
+                    payload.put("matrixA", convertToJSON(matrixA));
+                    payload.put("matrixB", convertToJSON(matrixB));
+                    JSONArray rowToComputeArr = new JSONArray();
+                    for(int num : rows) {
+                        rowToComputeArr.put(num);
+                    }
+                    payload.put("rowsToCompute", rowToComputeArr);
+                }
             }
-
-        }
-        else if(requestType==RequestType.DEVICE_STATE){
-            if(parameters != null){
-                payload.put(parametersKey, parameters);
+            else if(requestType==RequestType.DEVICE_STATE){
+                if(parameters != null){
+                    payload.put(parametersKey, parameters);
+                }
             }
-        }
-
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -107,8 +102,10 @@ public class PayloadBuilder {
             for(int num : row) {
                 rowArr.put(num);
             }
+
             jsonArray.put(rowArr);
         }
+
         return jsonArray;
     }
 }

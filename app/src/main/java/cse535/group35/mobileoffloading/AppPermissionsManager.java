@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -65,7 +64,6 @@ public class AppPermissionsManager {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @SuppressLint("MissingPermission")
     public static void checkForBluetoothEnabledAndTakeAction(Activity activity, int enableRequestCode) {
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

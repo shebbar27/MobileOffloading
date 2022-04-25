@@ -35,12 +35,9 @@ public class SlavePayloadCallback extends PayloadCallback {
         String data = new String(payload.asBytes());
             try {
                 JSONObject reader = new JSONObject(data);
-                //AppUtility.createAndDisplayToast(activity, "Received message: " + reader.getString(PayloadBuilder.requestTypeKey));
                 AppUtility.createAndDisplayToast(activity, "Received message: " + reader.optString(PayloadBuilder.requestTypeKey, "not here"));
 
-
                 if(reader.getString(PayloadBuilder.requestTypeKey).equals(RequestType.DEVICE_STATE.toString())){
-
                     double[] locationData = DeviceInfoHandler.getLastKnownLocation(activity);
                     Payload responsePayload=Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.DEVICE_STATE)
                             .setParameters(DeviceInfoHandler.getCurrentBatteryLevel(this.activity),
@@ -52,11 +49,10 @@ public class SlavePayloadCallback extends PayloadCallback {
                 }
 
                 if(reader.getString(PayloadBuilder.requestTypeKey).equals(RequestType.COMPUTE_RESULT.toString())){
-                    //AppUtility.createAndDisplayToast(activity, "Compute: " + data);
                     DeviceInfoHandler.updateStatusTextView(activity, SlaveStatus.BUSY);
-                    JSONArray matrixAArr1 = reader.getJSONArray("matrixA"); //{{1,2},{3,4}}
+                    JSONArray matrixAArr1 = reader.getJSONArray("matrixA");
                     Log.d("matrixAArr1", "matrix: " +  matrixAArr1);
-                    //AppUtility.createAndDisplayToast(activity, "Compute1: " + matrixAArr1);
+
                     int[][] A = new int[matrixAArr1.length()][matrixAArr1.length()];
                     for(int i = 0; i < matrixAArr1.length(); i++) {
                         JSONArray matrixAArrRow = matrixAArr1.getJSONArray(i);
@@ -82,14 +78,11 @@ public class SlavePayloadCallback extends PayloadCallback {
 
                     AppUtility.createAndDisplayToast(activity, "After extract: " + idxToCompute);
                     List<MatrixUtil.MultiplicationResult> res=new MatrixUtil(A, B).getMultiplicationResult(idxToCompute);
-                    //AppUtility.createAndDisplayToast(activity.getApplicationContext(), "multiply almost"+res.size());
-                    //AppUtility.createAndDisplayToast(activity.getApplicationContext(), "multiply almost1"+A[0][0]);
 
-                    //AppUtility.createAndDisplayToast(activity.getApplicationContext(), "Sent almost" + res.get(0).getRow()[0]);
                     Payload responsePayload=Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.COMPUTE_RESULT)
                             .setParameters(res)
                                     .build());
-                    //AppUtility.createAndDisplayToast(activity.getApplicationContext(), "Sent almost");
+
                     Nearby.getConnectionsClient(activity.getApplicationContext()).sendPayload(endpointId, responsePayload);
                     AppUtility.createAndDisplayToast(activity.getApplicationContext(), "Sent payload" + endpointId);
                     DeviceInfoHandler.updateResultTextView(activity, MatrixUtil.getMultiplicationResultJSONArray(res).toString());

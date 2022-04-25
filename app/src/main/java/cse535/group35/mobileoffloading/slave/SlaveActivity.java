@@ -110,7 +110,6 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
     {
         AppPermissionsManager.checkForBluetoothEnabledAndTakeAction(this,
                 REQUEST_ENABLE_BT);
-
         Button startStopAdvertising = findViewById(advertise_button);
         AdvertisingOptions advertisingOptions =
                 new AdvertisingOptions.Builder().setStrategy(Strategy.P2P_CLUSTER).build();
@@ -122,16 +121,20 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
             AppUtility.createAndDisplayToast(this,
                     "Stopped Advertising");
             this.isAdvertisingStarted = false;
-        } else {
+        }
+        else {
             Nearby.getConnectionsClient(getApplicationContext())
                     .startAdvertising(
-                            this.slaveName, this.nearbyServiceId, new SlaveConnectionLifecycleCallback(this), advertisingOptions)
+                            this.slaveName,
+                            this.nearbyServiceId,
+                            new SlaveConnectionLifecycleCallback(this),
+                            advertisingOptions)
                     .addOnSuccessListener(
                             (Void unused) -> AppUtility.createAndDisplayToast(this,
                                     "Started Advertising"))
                     .addOnFailureListener(
                             (Exception e) ->  AppUtility.createAndDisplayToast(this,
-                                    "Failed to start Advertising: "+e.getMessage()));
+                                    "Failed to start Advertising: " + e.getMessage()));
             startStopAdvertising.setText(stop_advertising);
             this.isAdvertisingStarted = true;
         }
