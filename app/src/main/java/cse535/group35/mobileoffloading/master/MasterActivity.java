@@ -43,7 +43,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
     public ArrayAdapter<String> connectedDevicesAdaptor;
     public static List<ConnectedDevice> connectedDeviceList;
 
-    private int[][] matrixResult = new int[50][50];
+    private int[][] matrixResult = new int[2][2];
     private Button computeButton;
     private TextView resultView;
     private static final int REQUEST_PERMISSIONS_CODE = 27;

@@ -51,9 +51,11 @@ public class SlavePayloadCallback extends PayloadCallback {
                 }
 
                 if(reader.getString(PayloadBuilder.requestTypeKey).equals(RequestType.COMPUTE_RESULT.toString())){
-                    AppUtility.createAndDisplayToast(activity, "Compute: " + data);
+                    //AppUtility.createAndDisplayToast(activity, "Compute: " + data);
 
                     JSONArray matrixAArr1 = reader.getJSONArray("matrixA"); //{{1,2},{3,4}}
+                    Log.d("matrixAArr1", "matrix: " +  matrixAArr1);
+                    //AppUtility.createAndDisplayToast(activity, "Compute1: " + matrixAArr1);
                     int[][] A = new int[matrixAArr1.length()][matrixAArr1.length()];
                     for(int i = 0; i < matrixAArr1.length(); i++) {
                         JSONArray matrixAArrRow = matrixAArr1.getJSONArray(i);
@@ -79,14 +81,16 @@ public class SlavePayloadCallback extends PayloadCallback {
 
                     AppUtility.createAndDisplayToast(activity, "After extract: " + idxToCompute);
                     List<MatrixUtil.MultiplicationResult> res=new MatrixUtil(A, B).getMultiplicationResult(idxToCompute);
-                    AppUtility.createAndDisplayToast(activity.getApplicationContext(), "multiply almost"+res.size());
+                    //AppUtility.createAndDisplayToast(activity.getApplicationContext(), "multiply almost"+res.size());
+                    //AppUtility.createAndDisplayToast(activity.getApplicationContext(), "multiply almost1"+A[0][0]);
 
+                    //AppUtility.createAndDisplayToast(activity.getApplicationContext(), "Sent almost" + res.get(0).getRow()[0]);
                     Payload responsePayload=Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.COMPUTE_RESULT)
                             .setParameters(res)
                                     .build());
-                    AppUtility.createAndDisplayToast(activity.getApplicationContext(), "Sent almost");
+                    //AppUtility.createAndDisplayToast(activity.getApplicationContext(), "Sent almost");
                     Nearby.getConnectionsClient(activity.getApplicationContext()).sendPayload(endpointId, responsePayload);
-                    AppUtility.createAndDisplayToast(activity.getApplicationContext(), "Sent payload");
+                    AppUtility.createAndDisplayToast(activity.getApplicationContext(), "Sent payload" + endpointId);
                 }
             } catch (JSONException e) {
                 AppUtility.createAndDisplayToast(activity, "Exception"+e.getMessage() );

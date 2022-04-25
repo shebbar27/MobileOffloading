@@ -59,7 +59,7 @@ public class PayloadBuilder {
     }
 
     public PayloadBuilder setParameters(List<MatrixUtil.MultiplicationResult> multiplicationResultList){
-        this.parameters = MatrixUtil.getMultiplicationResultJSONArray(multiplicationResultList).toString();
+        this.matrixResult = multiplicationResultList;
         return this;
     }
 
@@ -73,7 +73,7 @@ public class PayloadBuilder {
         if(requestType==RequestType.COMPUTE_RESULT){
 
             if(matrixResult!=null){
-                payload.put("resultMatrix",matrixResult);
+                payload.put("resultMatrix",MatrixUtil.getMultiplicationResultJSONArray(this.matrixResult).toString());
             }
             else {
                 payload.put("matrixA", convertToJSON(matrixA));
