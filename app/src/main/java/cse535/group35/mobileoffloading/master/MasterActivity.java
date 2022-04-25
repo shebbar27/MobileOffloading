@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.DiscoveryOptions;
@@ -22,7 +21,8 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.Strategy;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -33,78 +33,31 @@ import cse535.group35.mobileoffloading.PayloadBuilder;
 import cse535.group35.mobileoffloading.R;
 import cse535.group35.mobileoffloading.RequestType;
 import cse535.group35.mobileoffloading.TestMatrix;
+import cse535.group35.mobileoffloading.matrixutil.MatrixUtil;
 
 public class MasterActivity extends AppCompatActivity implements View.OnClickListener {
-    public ArrayAdapter<String> nearbyDevicesAdapter;
-    public ArrayAdapter<String> connectedDevicesAdaptor;
-    public static List<ConnectedDevice> connectedDeviceList;
 
-    private static int[][] matrixResult = new int[3][3];
-    private TextView resultView;
+    public static Set<ConnectedDevice> connectedDevices = new HashSet<>();
+    public static final int[][] matrixResult =
+            new int[TestMatrix.getMatrixA().length][TestMatrix.getMatrixB().length];
     private static final int REQUEST_PERMISSIONS_CODE = 27;
     private static final int REQUEST_ENABLE_BT = 137;
+
+    public ArrayAdapter<String> nearbyDevicesAdapter;
+    public ArrayAdapter<String> connectedDevicesAdaptor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_master);
-        nearbyDevicesAdapter=new ArrayAdapter<>(this,
+        nearbyDevicesAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_selectable_list_item);
-        connectedDevicesAdaptor=new ArrayAdapter<>(this,
+        this.connectedDevicesAdaptor = new ArrayAdapter<>(this,
                 android.R.layout.simple_selectable_list_item);
         this.registerOnClickListenerCallBackForButtons();
         this.initializeDevicesListView();
-
-        connectedDeviceList= new ArrayList<>();
-        ExecutorService executorService = Executors.newFixedThreadPool(1);
-        Runnable runnable = () -> {
-            while(true) {
-                boolean isCompleted = true;
-                if(MasterActivity.connectedDeviceList.isEmpty()) {
-                    continue;
-                }
-
-                for(ConnectedDevice connectedDevice : MasterActivity.connectedDeviceList) {
-                    if(!connectedDevice.isCompleted()) {
-                        isCompleted = false;
-                        break;
-                    }
-                }
-
-                if(isCompleted) {
-                    break;
-                }
-
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            runOnUiThread(()->{
-                String result = getStringFromMatrix(MasterActivity.matrixResult);
-                resultView = findViewById(R.id.resultView);
-                resultView.setText(result);
-                Toast.makeText(MasterActivity.this, "COMPLETED\n" + result, Toast.LENGTH_SHORT).show();
-            });
-        };
-
-        executorService.execute(runnable);
+        this.checkForResultCompletedAndUpdateResultTextView();
     }
-
-    private String getStringFromMatrix(int[][] matrixResult) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for(int[] row : matrixResult) {
-            for(int num : row) {
-                stringBuilder.append(num).append(" ");
-            }
-            stringBuilder.append("\n");
-        }
-
-        return stringBuilder.toString();
-    }
-
 
     @Override
     public void onClick(View view) {
@@ -116,54 +69,23 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                 this.returnToMainActivity();
                 break;
             case computeBtn:
-                startCompute();
-        }
-    }
-
-    private void startCompute() {
-        if(connectedDeviceList.size()==0){
-            Toast.makeText(this, "No device connected", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Toast.makeText(this,
-                "Computing with "+connectedDeviceList.size()+" devices",
-                Toast.LENGTH_SHORT).show();
-        int[][] matrix= TestMatrix.getMatrixA();
-        int rowsPerDevice= matrix.length/connectedDeviceList.size();
-        int currentRow=0;
-        for(int j = 0; j < connectedDeviceList.size(); j++){
-            ConnectedDevice device = connectedDeviceList.get(j);
-            ArrayList<Integer> rowsToCompute= new ArrayList<>();
-            for(int i=0;i<rowsPerDevice;i++){
-                rowsToCompute.add(currentRow);
-                currentRow++;
-            }
-
-            if(j == connectedDeviceList.size()- 1) {
-                for(int i=currentRow;i<matrix.length;i++){
-                    rowsToCompute.add(currentRow);
-                    currentRow++;
-                }
-            }
-
-            device.setComputeRows(rowsToCompute);
-            Payload payload= Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.COMPUTE_RESULT)
-                    .setParameters(matrix,matrix)
-                    .setParameters(rowsToCompute)
-                    .build());
-            Nearby.getConnectionsClient(this).sendPayload(device.getEndpointId(),payload);
+                this.startCompute();
+                break;
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_PERMISSIONS_CODE && grantResults.length > 0
                 && AppPermissionsManager.areAllPermissionsGranted(this)) {
-            AppPermissionsManager.checkForBluetoothEnabledAndTakeAction(this, REQUEST_ENABLE_BT);
+            AppPermissionsManager.checkForBluetoothEnabledAndTakeAction(this,
+                    REQUEST_ENABLE_BT);
         } else {
-            AppPermissionsManager.requestAllPermissions(this, REQUEST_PERMISSIONS_CODE);
+            AppPermissionsManager.requestAllPermissions(this,
+                    REQUEST_PERMISSIONS_CODE);
         }
     }
 
@@ -177,23 +99,99 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    private void checkForResultCompletedAndUpdateResultTextView() {
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        Runnable runnable = () -> {
+            while(true) {
+                boolean isCompleted = true;
+                if (MasterActivity.connectedDevices.isEmpty()) {
+                    continue;
+                }
+
+                for (ConnectedDevice connectedDevice : MasterActivity.connectedDevices) {
+                    if (!connectedDevice.isCompleted()) {
+                        isCompleted = false;
+                        break;
+                    }
+                }
+
+                if (isCompleted) {
+                    break;
+                }
+
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            runOnUiThread(()->{
+                String result = MatrixUtil.getStringFromMatrix();
+                TextView resultView = findViewById(R.id.resultView);
+                resultView.setText(result);
+                AppUtility.createAndDisplayToast(MasterActivity.this,
+                        "COMPLETED\n" + result);
+            });
+        };
+
+        executorService.execute(runnable);
+    }
+
+    private void startCompute() {
+        if (connectedDevices.size() == 0){
+            AppUtility.createAndDisplayToast(this, "No device connected");
+            return;
+        }
+
+        AppUtility.createAndDisplayToast(this,
+                "Computing with "+ connectedDevices.size() + " devices");
+        int[][] matrix = TestMatrix.getMatrixA();
+        int rowsPerDevice = matrix.length/connectedDevices.size();
+        int currentRow = 0;
+        ArrayList<ConnectedDevice> connectedDevicesList = new ArrayList<>(connectedDevices);
+        for (int j = 0; j< connectedDevicesList.size(); j++) {
+            ConnectedDevice device = connectedDevicesList.get(j);
+            ArrayList<Integer> rowsToCompute= new ArrayList<>();
+            for(int i=0; i<rowsPerDevice; i++){
+                rowsToCompute.add(currentRow);
+                currentRow++;
+            }
+
+            if(j == connectedDevicesList.size() - 1) {
+                for(int i=currentRow; i<matrix.length; i++){
+                    rowsToCompute.add(currentRow);
+                    currentRow++;
+                }
+            }
+
+            device.setComputeRows(rowsToCompute);
+            Payload payload= Payload.fromBytes(
+                    new PayloadBuilder().setRequestType(RequestType.COMPUTE_RESULT)
+                            .setParameters(matrix, matrix)
+                            .setParameters(rowsToCompute)
+                            .build());
+            Nearby.getConnectionsClient(this).sendPayload(device.getEndpointId(),payload);
+        }
+    }
+
     private void startDiscovery() {
         AppPermissionsManager.checkForBluetoothEnabledAndTakeAction(this,
                 REQUEST_ENABLE_BT);
-        AppUtility.createAndDisplayToast(this, "Starting Discovery");
         AlertDialog.Builder builder = new AlertDialog.Builder(MasterActivity.this);
         builder.setTitle("Choose a device");
         builder.setAdapter(nearbyDevicesAdapter, (dialogInterface, i) -> {
-            String selectedDevice=nearbyDevicesAdapter.getItem(i);
+            String selectedDevice = nearbyDevicesAdapter.getItem(i);
+            selectedDevice = selectedDevice.substring(selectedDevice.length()-5, selectedDevice.length()-1);
+
             AppPermissionsManager.checkForBluetoothEnabledAndTakeAction(MasterActivity.this,
                     REQUEST_ENABLE_BT);
             Nearby.getConnectionsClient(getApplicationContext())
                     .requestConnection("MASTER",
                             selectedDevice,
                             new MasterConnectionLifecycleCallback(MasterActivity.this,
-                                    connectedDevicesAdaptor,
-                                    connectedDeviceList,
-                                    matrixResult))
+                                    this.connectedDevicesAdaptor,
+                                    this.nearbyDevicesAdapter))
                     .addOnSuccessListener(
                             (Void unused) -> {
                                 dialogInterface.cancel();
@@ -211,7 +209,9 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
             DiscoveryOptions discoveryOptions =
                     new DiscoveryOptions.Builder().setStrategy(Strategy.P2P_CLUSTER).build();
             Nearby.getConnectionsClient(getApplicationContext())
-                    .startDiscovery(getResources().getString(nearbyServiceId), new MasterEndpointDiscoveryCallback(this, nearbyDevicesAdapter), discoveryOptions)
+                    .startDiscovery(getResources().getString(nearbyServiceId),
+                            new MasterEndpointDiscoveryCallback(this, nearbyDevicesAdapter),
+                            discoveryOptions)
                     .addOnSuccessListener(
                             (Void unused) -> {
                                 // We're discovering!

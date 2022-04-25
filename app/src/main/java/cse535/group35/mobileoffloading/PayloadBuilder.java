@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 
 import cse535.group35.mobileoffloading.matrixutil.MatrixUtil;
+import cse535.group35.mobileoffloading.matrixutil.MultiplicationResult;
 
 public class PayloadBuilder {
 
@@ -22,11 +23,9 @@ public class PayloadBuilder {
 
     private RequestType requestType;
     private String parameters;
-    private int[][] matrixA,matrixB;
+    private int[][] matrixA, matrixB;
     private ArrayList<Integer> rows;
-    private int[][] result;
-    private List<MatrixUtil.MultiplicationResult> matrixResult;
-    private int index;
+    private List<MultiplicationResult> matrixResult;
 
     public PayloadBuilder setRequestType(RequestType requestType){
         this.requestType = requestType;
@@ -59,7 +58,7 @@ public class PayloadBuilder {
         return this;
     }
 
-    public PayloadBuilder setParameters(List<MatrixUtil.MultiplicationResult> multiplicationResultList){
+    public PayloadBuilder setParameters(List<MultiplicationResult> multiplicationResultList){
         this.matrixResult = multiplicationResultList;
         return this;
     }

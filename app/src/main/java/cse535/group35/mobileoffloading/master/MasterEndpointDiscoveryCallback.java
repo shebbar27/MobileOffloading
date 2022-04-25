@@ -12,7 +12,6 @@ import com.google.android.gms.nearby.connection.Payload;
 
 import java.util.ArrayList;
 
-import cse535.group35.mobileoffloading.AppUtility;
 import cse535.group35.mobileoffloading.ConnectedDevice;
 import cse535.group35.mobileoffloading.PayloadBuilder;
 import cse535.group35.mobileoffloading.RequestType;
@@ -28,24 +27,23 @@ public class MasterEndpointDiscoveryCallback extends EndpointDiscoveryCallback {
     }
     @Override
     public void onEndpointFound(@NonNull String endPointId, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
-        AppUtility.createAndDisplayToast(this.activity, "Found Device: "+discoveredEndpointInfo.getEndpointName());
-        nearbyDevicesAdapter.add(endPointId);
+        this.nearbyDevicesAdapter.add(discoveredEndpointInfo.getEndpointName() + " (" + endPointId + ")");
     }
 
     @Override
     public void onEndpointLost(@NonNull String endPointId) {
         try {
-            ConnectedDevice connectedDevice = MasterActivity.connectedDeviceList.stream()
-                    .filter(e -> e.getEndpointId() == endPointId)
-                    .findFirst().orElseThrow(() -> new Exception("Exception"));
+            ConnectedDevice connectedDevice = MasterActivity.connectedDevices.stream()
+                    .filter(e -> e.getEndpointId().equals(endPointId))
+                    .findFirst().orElseThrow(() ->
+                            new Exception("No device with endpointID: " + endPointId + " found!"));
             connectedDevice.setDeviceState(-1);
             connectedDevice.setCompleted(true);
             connectedDevice.setBusy(false);
             ArrayList<Integer> computeRows = connectedDevice.getComputeRows();
 
-
-            ConnectedDevice completedConnectedDevice = MasterActivity.connectedDeviceList.stream()
-                    .filter(e -> e.isCompleted())
+            ConnectedDevice completedConnectedDevice = MasterActivity.connectedDevices.stream()
+                    .filter(ConnectedDevice::isCompleted)
                     .findFirst().orElseThrow(() -> new Exception("Exception"));
             while(completedConnectedDevice == null) {
                 Thread.sleep(3000);
@@ -54,10 +52,11 @@ public class MasterEndpointDiscoveryCallback extends EndpointDiscoveryCallback {
             connectedDevice.setCompleted(false);
             connectedDevice.setComputeRows(computeRows);
 
-            Payload payload= Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.COMPUTE_RESULT)
-                    .setParameters(TestMatrix.getMatrixA(),TestMatrix.getMatrixB())
-                    .setParameters(computeRows)
-                    .build());
+            Payload payload= Payload.fromBytes(
+                    new PayloadBuilder().setRequestType(RequestType.COMPUTE_RESULT)
+                        .setParameters(TestMatrix.getMatrixA(), TestMatrix.getMatrixB())
+                        .setParameters(computeRows)
+                        .build());
             Nearby.getConnectionsClient(this.activity).sendPayload(connectedDevice.getEndpointId(),payload);
         } catch (Exception e) {
             e.printStackTrace();

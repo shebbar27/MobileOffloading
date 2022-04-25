@@ -72,7 +72,7 @@ public class ConnectedDevice {
         isCompleted = completed;
     }
 
-    public class DeviceLocation {
+    public static class DeviceLocation {
         private double latitude;
         private double longitude;
     }

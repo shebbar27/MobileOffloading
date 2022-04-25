@@ -13,6 +13,7 @@ import android.location.LocationManager;
 import android.os.BatteryManager;
 import android.provider.Settings;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ import androidx.annotation.NonNull;
 import java.util.Locale;
 
 import cse535.group35.mobileoffloading.AppUtility;
+import cse535.group35.mobileoffloading.R;
 
 public class DeviceInfoHandler {
 
@@ -67,6 +69,20 @@ public class DeviceInfoHandler {
         TextView resultTextView = activity.findViewById(result_textView);
         if(resultTextView != null) {
             resultTextView.setVisibility(visible);
+        }
+    }
+
+    public static void updateAdvertiseButton(Activity activity, String advertiseStatus) {
+        Button advertiseButton = activity.findViewById(advertise_button);
+        if(advertiseButton != null) {
+            advertiseButton.setText(advertiseStatus);
+        }
+    }
+
+    public static void toggleAdvertiseButton(Activity activity) {
+        Button advertiseButton = activity.findViewById(advertise_button);
+        if(advertiseButton != null) {
+            advertiseButton.setEnabled(!advertiseButton.isEnabled());
         }
     }
 

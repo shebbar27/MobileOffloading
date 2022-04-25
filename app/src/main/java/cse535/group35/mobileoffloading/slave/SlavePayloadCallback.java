@@ -17,11 +17,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import cse535.group35.mobileoffloading.AppUtility;
 import cse535.group35.mobileoffloading.PayloadBuilder;
 import cse535.group35.mobileoffloading.RequestType;
 import cse535.group35.mobileoffloading.matrixutil.MatrixUtil;
+import cse535.group35.mobileoffloading.matrixutil.MultiplicationResult;
 
 public class SlavePayloadCallback extends PayloadCallback {
 
@@ -35,9 +37,7 @@ public class SlavePayloadCallback extends PayloadCallback {
         String data = new String(payload.asBytes());
             try {
                 JSONObject reader = new JSONObject(data);
-                AppUtility.createAndDisplayToast(activity, "Received message: " + reader.optString(PayloadBuilder.requestTypeKey, "not here"));
-
-                if(reader.getString(PayloadBuilder.requestTypeKey).equals(RequestType.DEVICE_STATE.toString())){
+                if(reader.getString(PayloadBuilder.requestTypeKey).equals(RequestType.DEVICE_STATE.name())){
                     double[] locationData = DeviceInfoHandler.getLastKnownLocation(activity);
                     Payload responsePayload=Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.DEVICE_STATE)
                             .setParameters(DeviceInfoHandler.getCurrentBatteryLevel(this.activity),
@@ -45,10 +45,9 @@ public class SlavePayloadCallback extends PayloadCallback {
                                     locationData[1])
                             .build());
                     Nearby.getConnectionsClient(activity.getApplicationContext()).sendPayload(endpointId, responsePayload);
-                    AppUtility.createAndDisplayToast(activity.getApplicationContext(), "Sent payload");
                 }
 
-                if(reader.getString(PayloadBuilder.requestTypeKey).equals(RequestType.COMPUTE_RESULT.toString())){
+                if(reader.getString(PayloadBuilder.requestTypeKey).equals(RequestType.COMPUTE_RESULT.name())){
                     DeviceInfoHandler.updateStatusTextView(activity, SlaveStatus.BUSY);
                     JSONArray matrixAArr1 = reader.getJSONArray("matrixA");
                     Log.d("matrixAArr1", "matrix: " +  matrixAArr1);
@@ -76,16 +75,20 @@ public class SlavePayloadCallback extends PayloadCallback {
                         idxToCompute.add(rows.getInt(i));
                     }
 
-                    AppUtility.createAndDisplayToast(activity, "After extract: " + idxToCompute);
-                    List<MatrixUtil.MultiplicationResult> res=new MatrixUtil(A, B).getMultiplicationResult(idxToCompute);
+                    List<MultiplicationResult> multiplicationResults
+                            = new MatrixUtil(A, B).getMultiplicationResult(idxToCompute);
 
-                    Payload responsePayload=Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.COMPUTE_RESULT)
-                            .setParameters(res)
+                    Payload responsePayload=Payload.fromBytes(
+                            new PayloadBuilder().setRequestType(RequestType.COMPUTE_RESULT)
+                                    .setParameters(multiplicationResults)
                                     .build());
 
-                    Nearby.getConnectionsClient(activity.getApplicationContext()).sendPayload(endpointId, responsePayload);
-                    AppUtility.createAndDisplayToast(activity.getApplicationContext(), "Sent payload" + endpointId);
-                    DeviceInfoHandler.updateResultTextView(activity, MatrixUtil.getMultiplicationResultJSONArray(res).toString());
+                    Nearby.getConnectionsClient(
+                            activity.getApplicationContext())
+                            .sendPayload(endpointId, responsePayload);
+
+                    DeviceInfoHandler.updateResultTextView(activity,
+                            getAllResultMatrixRowsAndIndexes(multiplicationResults));
                     DeviceInfoHandler.setResultTextViewVisibility(activity, View.VISIBLE);
                     DeviceInfoHandler.updateStatusTextView(activity, SlaveStatus.IDLE);
                 }
@@ -99,5 +102,21 @@ public class SlavePayloadCallback extends PayloadCallback {
     @Override
     public void onPayloadTransferUpdate(@NonNull String endpointId, @NonNull PayloadTransferUpdate payloadTransferUpdate) {
         // TODO
+    }
+
+    private String getResultMatrixRowAndIndex(MultiplicationResult result) {
+        return String.format(Locale.US,
+                "Result Row Index: %d\nResult Row Values: %s\n",
+                result.getResultRowId(),
+                result.getRowValues());
+    }
+
+    private String getAllResultMatrixRowsAndIndexes(List<MultiplicationResult> multiplicationResults) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (MultiplicationResult result : multiplicationResults) {
+            stringBuilder.append(getResultMatrixRowAndIndex(result));
+        }
+
+        return stringBuilder.toString();
     }
 }

@@ -30,7 +30,6 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
     private static final int REQUEST_ENABLE_BT = 137;
     private String nearbyServiceId;
     private String slaveName;
-    private boolean isAdvertisingStarted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +46,7 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case advertise_button:
-                this.startOrStopAdvertising();
+                this.toggleAdvertising();
                 break;
             case update_device_info_button:
                 this.updateDeviceInfo();
@@ -106,7 +105,7 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
         DeviceInfoHandler.setResultTextViewVisibility(this, View.INVISIBLE);
     }
 
-    private void startOrStopAdvertising()
+    private void toggleAdvertising()
     {
         AppPermissionsManager.checkForBluetoothEnabledAndTakeAction(this,
                 REQUEST_ENABLE_BT);
@@ -115,12 +114,11 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
                 new AdvertisingOptions.Builder().setStrategy(Strategy.P2P_CLUSTER).build();
         ConnectionsClient connectionsClient = Nearby.getConnectionsClient(getApplicationContext());
 
-        if(this.isAdvertisingStarted) {
+        if(startStopAdvertising.getText().equals(getString(stop_advertising))) {
             connectionsClient.stopAdvertising();
             startStopAdvertising.setText(start_advertising);
             AppUtility.createAndDisplayToast(this,
                     "Stopped Advertising");
-            this.isAdvertisingStarted = false;
         }
         else {
             Nearby.getConnectionsClient(getApplicationContext())
@@ -136,7 +134,6 @@ public class SlaveActivity extends AppCompatActivity implements View.OnClickList
                             (Exception e) ->  AppUtility.createAndDisplayToast(this,
                                     "Failed to start Advertising: " + e.getMessage()));
             startStopAdvertising.setText(stop_advertising);
-            this.isAdvertisingStarted = true;
         }
     }
 

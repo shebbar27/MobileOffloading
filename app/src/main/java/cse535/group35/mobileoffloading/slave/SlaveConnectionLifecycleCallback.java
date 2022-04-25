@@ -20,23 +20,28 @@ public class SlaveConnectionLifecycleCallback extends ConnectionLifecycleCallbac
 
     @Override
     public void onConnectionInitiated(@NonNull String endPointId, @NonNull ConnectionInfo connectionInfo) {
-        AppUtility.createAndDisplayToast(activity,
-                "Accepting Connection from " + connectionInfo.getEndpointName());
         AppUtility.createConnectionConsentAlert(activity,
                 endPointId,
-                (dialog, which) -> Nearby.getConnectionsClient(activity.getApplicationContext())
-                        .acceptConnection(endPointId, new SlavePayloadCallback(activity)),
+                (dialog, which) ->
+                {
+                    Nearby.getConnectionsClient(activity.getApplicationContext())
+                            .acceptConnection(endPointId, new SlavePayloadCallback(activity));
+                },
                 (dialog, which) -> dialog.cancel()
         );
     }
 
+
     @Override
     public void onConnectionResult(@NonNull String s, @NonNull ConnectionResolution connectionResolution) {
-        // TODO
+        Nearby.getConnectionsClient(activity.getApplicationContext()).stopAdvertising();
+        DeviceInfoHandler.updateAdvertiseButton(activity, "Connected");
+        DeviceInfoHandler.toggleAdvertiseButton(activity);
     }
 
     @Override
     public void onDisconnected(@NonNull String s) {
-        // TODO
+        DeviceInfoHandler.updateAdvertiseButton(activity, "Start Advertising");
+        DeviceInfoHandler.toggleAdvertiseButton(activity);
     }
 }
