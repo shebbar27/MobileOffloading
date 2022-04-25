@@ -90,7 +90,8 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                 System.out.println("COMPLETED");
                 runOnUiThread(()->{
                     String result = getStringFromMatrix(MasterActivity.matrixResult);
-
+                    resultView = findViewById(R.id.resultView);
+                    resultView.setText(result);
                     Toast.makeText(MasterActivity.this, "COMPLETED\n" + result, Toast.LENGTH_SHORT).show();
                 });
             }
@@ -109,8 +110,6 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
             stringBuilder.append("\n");
         }
 
-        resultView = findViewById(R.id.resultView);
-        resultView.setText(stringBuilder.toString());
         return stringBuilder.toString();
     }
 

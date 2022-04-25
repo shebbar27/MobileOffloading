@@ -2,6 +2,7 @@ package cse535.group35.mobileoffloading.slave;
 
 import android.app.Activity;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
@@ -52,7 +53,7 @@ public class SlavePayloadCallback extends PayloadCallback {
 
                 if(reader.getString(PayloadBuilder.requestTypeKey).equals(RequestType.COMPUTE_RESULT.toString())){
                     //AppUtility.createAndDisplayToast(activity, "Compute: " + data);
-
+                    DeviceInfoHandler.updateStatusTextView(activity, SlaveStatus.BUSY);
                     JSONArray matrixAArr1 = reader.getJSONArray("matrixA"); //{{1,2},{3,4}}
                     Log.d("matrixAArr1", "matrix: " +  matrixAArr1);
                     //AppUtility.createAndDisplayToast(activity, "Compute1: " + matrixAArr1);
@@ -91,6 +92,9 @@ public class SlavePayloadCallback extends PayloadCallback {
                     //AppUtility.createAndDisplayToast(activity.getApplicationContext(), "Sent almost");
                     Nearby.getConnectionsClient(activity.getApplicationContext()).sendPayload(endpointId, responsePayload);
                     AppUtility.createAndDisplayToast(activity.getApplicationContext(), "Sent payload" + endpointId);
+                    DeviceInfoHandler.updateResultTextView(activity, MatrixUtil.getMultiplicationResultJSONArray(res).toString());
+                    DeviceInfoHandler.setResultTextViewVisibility(activity, View.VISIBLE);
+                    DeviceInfoHandler.updateStatusTextView(activity, SlaveStatus.IDLE);
                 }
             } catch (JSONException e) {
                 AppUtility.createAndDisplayToast(activity, "Exception"+e.getMessage() );
