@@ -44,7 +44,7 @@ public class MasterPayloadCallback extends PayloadCallback {
                     int row=array.getJSONObject(i).getInt("rowIdx");
                     JSONArray arr=array.getJSONObject(i).getJSONArray("row");
                     for(int j = 0; j < arr.length(); j++) {
-                        this.matrixResult[i][j] = arr.getInt(j);
+                        this.matrixResult[row][j] = arr.getInt(j);
                     }
 
                 }

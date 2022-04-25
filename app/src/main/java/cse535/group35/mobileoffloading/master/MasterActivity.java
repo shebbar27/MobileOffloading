@@ -43,7 +43,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
     public ArrayAdapter<String> connectedDevicesAdaptor;
     public static List<ConnectedDevice> connectedDeviceList;
 
-    private int[][] matrixResult = new int[2][2];
+    private static int[][] matrixResult = new int[3][3];
     private Button computeButton;
     private TextView resultView;
     private static final int REQUEST_PERMISSIONS_CODE = 27;
@@ -68,6 +68,10 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
             public void run() {
                 while(true) {
                     boolean isCompleted = true;
+                    if(MasterActivity.connectedDeviceList.isEmpty()) {
+                        continue;
+                    }
+
                     for(ConnectedDevice connectedDevice : MasterActivity.connectedDeviceList) {
                         if(!connectedDevice.isCompleted()) {
                             isCompleted = false;
@@ -85,8 +89,9 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 System.out.println("COMPLETED");
                 runOnUiThread(()->{
-                    //resultView.setText("COMPLETED");
-                    Toast.makeText(MasterActivity.this, "COMPLETED", Toast.LENGTH_SHORT).show();
+                    String result = getStringFromMatrix(MasterActivity.matrixResult);
+
+                    Toast.makeText(MasterActivity.this, "COMPLETED\n" + result, Toast.LENGTH_SHORT).show();
                 });
             }
         };
@@ -94,6 +99,21 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
         
 
     }
+
+    private String getStringFromMatrix(int[][] matrixResult) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for(int[] row : matrixResult) {
+            for(int num : row) {
+                stringBuilder.append(num).append(" ");
+            }
+            stringBuilder.append("\n");
+        }
+
+        resultView = findViewById(R.id.resultView);
+        resultView.setText(stringBuilder.toString());
+        return stringBuilder.toString();
+    }
+
 
     @Override
     public void onClick(View view) {
@@ -117,14 +137,20 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
         }
         Toast.makeText(this, "Computing with "+connectedDeviceList.size()+" devices", Toast.LENGTH_SHORT).show();
         int[][] matrix= TestMatrix.getMatrixA();
-        int rowsPerDevice= (matrix.length/connectedDeviceList.size())+1;
+        int rowsPerDevice= matrix.length/connectedDeviceList.size();
         int currentRow=0;
-        for(ConnectedDevice device:connectedDeviceList){
+        for(int j = 0; j < connectedDeviceList.size(); j++){
+            ConnectedDevice device = connectedDeviceList.get(j);
             ArrayList<Integer> rowsToCompute= new ArrayList<>();
             for(int i=0;i<rowsPerDevice;i++){
                 rowsToCompute.add(currentRow);
-                if(currentRow==matrix.length-1) break;
                 currentRow++;
+            }
+            if(j == connectedDeviceList.size()- 1) {
+                for(int i=currentRow;i<matrix.length;i++){
+                    rowsToCompute.add(currentRow);
+                    currentRow++;
+                }
             }
             device.setComputeRows(rowsToCompute);
             Payload payload= Payload.fromBytes(new PayloadBuilder().setRequestType(RequestType.COMPUTE_RESULT)
