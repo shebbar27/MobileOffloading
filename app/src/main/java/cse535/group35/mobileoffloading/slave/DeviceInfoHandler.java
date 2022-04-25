@@ -12,6 +12,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.BatteryManager;
 import android.provider.Settings;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -61,6 +62,7 @@ public class DeviceInfoHandler {
         TextView resultTextView = activity.findViewById(result_textView);
         setResultTextViewVisibility(activity, View.VISIBLE);
         if(resultTextView != null) {
+            resultTextView.setMovementMethod(new ScrollingMovementMethod());
             resultTextView.setText(String.format(activity.getString(result), matrixResult));
         }
     }

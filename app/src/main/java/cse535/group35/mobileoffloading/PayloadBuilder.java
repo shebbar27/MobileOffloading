@@ -22,7 +22,7 @@ public class PayloadBuilder {
 
 
     private RequestType requestType;
-    private String parameters;
+    private JSONObject parameters;
     private int[][] matrixA, matrixB;
     private ArrayList<Integer> rows;
     private List<MultiplicationResult> matrixResult;
@@ -43,7 +43,7 @@ public class PayloadBuilder {
             e.printStackTrace();
         }
 
-        parameters= body.toString();
+        parameters= body;
         return this;
     }
 

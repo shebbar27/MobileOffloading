@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 
 import android.widget.ArrayAdapter;
@@ -25,6 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import cse535.group35.mobileoffloading.AppUtility;
 import cse535.group35.mobileoffloading.AppPermissionsManager;
@@ -38,13 +40,14 @@ import cse535.group35.mobileoffloading.matrixutil.MatrixUtil;
 public class MasterActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static Set<ConnectedDevice> connectedDevices = new HashSet<>();
+    ArrayList<ConnectedDevice> activeDevices = new ArrayList<>();
     public static final int[][] matrixResult =
             new int[TestMatrix.getMatrixA().length][TestMatrix.getMatrixB().length];
     private static final int REQUEST_PERMISSIONS_CODE = 27;
     private static final int REQUEST_ENABLE_BT = 137;
 
     public ArrayAdapter<String> nearbyDevicesAdapter;
-    public ArrayAdapter<String> connectedDevicesAdaptor;
+    public static ArrayAdapter<String> connectedDevicesAdaptor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,12 +106,20 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
         ExecutorService executorService = Executors.newFixedThreadPool(1);
         Runnable runnable = () -> {
             while(true) {
+                activeDevices.clear();
+                for(ConnectedDevice d:connectedDevices){
+                    if(d.getDeviceState()!=-1){
+                        activeDevices.add(d);
+                    }
+                }
+
                 boolean isCompleted = true;
-                if (MasterActivity.connectedDevices.isEmpty()) {
+
+                if (activeDevices.isEmpty()) {
                     continue;
                 }
 
-                for (ConnectedDevice connectedDevice : MasterActivity.connectedDevices) {
+                for (ConnectedDevice connectedDevice : activeDevices) {
                     if (!connectedDevice.isCompleted()) {
                         isCompleted = false;
                         break;
@@ -129,9 +140,9 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
             runOnUiThread(()->{
                 String result = MatrixUtil.getStringFromMatrix();
                 TextView resultView = findViewById(R.id.resultView);
+                resultView.setMovementMethod(new ScrollingMovementMethod());
                 resultView.setText(result);
-                AppUtility.createAndDisplayToast(MasterActivity.this,
-                        "COMPLETED\n" + result);
+
             });
         };
 
@@ -139,17 +150,22 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void startCompute() {
-        if (connectedDevices.size() == 0){
-            AppUtility.createAndDisplayToast(this, "No device connected");
+        activeDevices.clear();
+        for(ConnectedDevice d:connectedDevices){
+            if(d.getDeviceState()!=-1){
+                activeDevices.add(d);
+            }
+        }if (activeDevices.size() == 0){
+            AppUtility.createAndDisplayToast(this, "No active device connected");
             return;
         }
 
         AppUtility.createAndDisplayToast(this,
-                "Computing with "+ connectedDevices.size() + " devices");
+                "Computing with "+ activeDevices.size() + " devices");
         int[][] matrix = TestMatrix.getMatrixA();
-        int rowsPerDevice = matrix.length/connectedDevices.size();
+        int rowsPerDevice = matrix.length/activeDevices.size();
         int currentRow = 0;
-        ArrayList<ConnectedDevice> connectedDevicesList = new ArrayList<>(connectedDevices);
+        ArrayList<ConnectedDevice> connectedDevicesList = new ArrayList<>(activeDevices);
         for (int j = 0; j< connectedDevicesList.size(); j++) {
             ConnectedDevice device = connectedDevicesList.get(j);
             ArrayList<Integer> rowsToCompute= new ArrayList<>();

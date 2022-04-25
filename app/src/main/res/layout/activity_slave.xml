@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.100000024" />
+        app:layout_constraintVertical_bias="0.058" />
 
     <Button
         android:id="@+id/advertise_button"
@@ -26,9 +26,10 @@
         android:text="@string/start_advertising"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/slave_name_textView"
-        app:layout_constraintVertical_bias="0.100000024" />
+        app:layout_constraintVertical_bias="0.035" />
 
     <TextView
         android:id="@+id/battery_level_textView"
@@ -38,10 +39,10 @@
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.529"
+        app:layout_constraintHorizontal_bias="0.524"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/device_info_textView"
-        app:layout_constraintVertical_bias="0.100000024" />
+        app:layout_constraintVertical_bias="0.048" />
 
     <TextView
         android:id="@+id/location_textView"
@@ -51,9 +52,10 @@
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/battery_level_textView"
-        app:layout_constraintVertical_bias="0.100000024" />
+        app:layout_constraintVertical_bias="0.059" />
 
     <TextView
         android:id="@+id/device_info_textView"
@@ -66,7 +68,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/advertise_button"
-        app:layout_constraintVertical_bias="0.100000024" />
+        app:layout_constraintVertical_bias="0.058" />
 
     <TextView
         android:id="@+id/status_textView"
@@ -76,9 +78,10 @@
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/location_textView"
-        app:layout_constraintVertical_bias="0.100000024" />
+        app:layout_constraintVertical_bias="0.059" />
 
     <Button
         android:id="@+id/slave_back_button"
@@ -103,13 +106,13 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.95" />
 
-    <EditText
+    <TextView
         android:id="@+id/result_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:editable="false"
+        android:layout_width="282dp"
+        android:layout_height="201dp"
         android:minWidth="48dp"
         android:minHeight="48dp"
+        android:scrollbars="horizontal|vertical"
         android:text="@string/empty_string"
         app:layout_constraintBottom_toTopOf="@+id/update_device_info_button"
         app:layout_constraintEnd_toEndOf="parent"

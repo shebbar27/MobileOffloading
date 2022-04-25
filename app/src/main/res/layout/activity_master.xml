@@ -42,12 +42,12 @@
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/resultView"
-        app:layout_constraintVertical_bias="0.25" />
+        app:layout_constraintVertical_bias="0.882" />
 
     <ListView
         android:id="@+id/devices_listview"
-        android:layout_width="370dp"
-        android:layout_height="231dp"
+        android:layout_width="368dp"
+        android:layout_height="170dp"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -64,14 +64,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/devices_listview"
-        app:layout_constraintVertical_bias="0.100000024" />
+        app:layout_constraintVertical_bias="0.033" />
 
-    <EditText
+    <TextView
         android:id="@+id/resultView"
-        android:layout_width="240dp"
-        android:layout_height="100dp"
-        android:editable="false"
-        android:text="@string/empty_string"
+        android:layout_width="376dp"
+        android:layout_height="194dp"
+        android:scrollbarAlwaysDrawHorizontalTrack="true"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbars="horizontal|vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
