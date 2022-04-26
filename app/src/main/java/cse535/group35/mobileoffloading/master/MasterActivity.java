@@ -15,14 +15,18 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.DiscoveryOptions;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.Strategy;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,6 +40,7 @@ import cse535.group35.mobileoffloading.R;
 import cse535.group35.mobileoffloading.RequestType;
 import cse535.group35.mobileoffloading.TestMatrix;
 import cse535.group35.mobileoffloading.matrixutil.MatrixUtil;
+import cse535.group35.mobileoffloading.matrixutil.MultiplicationResult;
 
 public class MasterActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -48,6 +53,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
 
     public ArrayAdapter<String> nearbyDevicesAdapter;
     public static ArrayAdapter<String> connectedDevicesAdaptor;
+    public static Date startTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +78,37 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
                 this.returnToMainActivity();
                 break;
             case computeBtn:
+                activeDevices.clear();
+                for(ConnectedDevice d:connectedDevices){
+                    if(d.getDeviceState()!=-1){
+                        activeDevices.add(d);
+                    }
+                }if (activeDevices.size() == 0){
+                AppUtility.createAndDisplayToast(this, "Computing on master device");
+                Date startTime= new Date();
+
+                computeOnMaster();
+                Date endTime= new Date();
+                Toast.makeText(this, "Time taken:"+(endTime.getTime()-startTime.getTime())+" ms", Toast.LENGTH_LONG).show();
+            }
+                else{
                 this.startCompute();
+            }
+
                 break;
         }
+    }
+
+    private void computeOnMaster() {
+        List<MultiplicationResult> result=new MatrixUtil(TestMatrix.getMatrixA(),TestMatrix.getMatrixB()).getMultiplicationResult();
+        StringBuilder builder= new StringBuilder();
+        for(MultiplicationResult r:result){
+            builder.append(r.getRowValues()+"\n");
+        }
+        TextView resultView = findViewById(R.id.resultView);
+        resultView.setMovementMethod(new ScrollingMovementMethod());
+        resultView.setText(builder.toString());
+
     }
 
     @Override
@@ -138,6 +172,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
             }
 
             runOnUiThread(()->{
+                Toast.makeText(this, "Time taken: "+(new Date().getTime()-startTime.getTime()) +"ms", Toast.LENGTH_LONG).show();
                 String result = MatrixUtil.getStringFromMatrix();
                 TextView resultView = findViewById(R.id.resultView);
                 resultView.setMovementMethod(new ScrollingMovementMethod());
@@ -150,15 +185,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void startCompute() {
-        activeDevices.clear();
-        for(ConnectedDevice d:connectedDevices){
-            if(d.getDeviceState()!=-1){
-                activeDevices.add(d);
-            }
-        }if (activeDevices.size() == 0){
-            AppUtility.createAndDisplayToast(this, "No active device connected");
-            return;
-        }
+
 
         AppUtility.createAndDisplayToast(this,
                 "Computing with "+ activeDevices.size() + " devices");
@@ -182,6 +209,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
             }
 
             device.setComputeRows(rowsToCompute);
+            startTime= new Date();
             Payload payload= Payload.fromBytes(
                     new PayloadBuilder().setRequestType(RequestType.COMPUTE_RESULT)
                             .setParameters(matrix, matrix)

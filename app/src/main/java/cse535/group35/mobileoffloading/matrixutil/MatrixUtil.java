@@ -30,6 +30,15 @@ public class MatrixUtil {
 
         return multiplicationResults;
     }
+    public List<MultiplicationResult> getMultiplicationResult() {
+        LOGGER.log(Level.WARNING, "Starting multiplication");
+        List<MultiplicationResult> multiplicationResults = new ArrayList<>();
+        for(int idxToCalculate=0;idxToCalculate<this.A.length;idxToCalculate++) {
+            multiplicationResults.add(getMultiplicationResultForRow(idxToCalculate));
+        }
+
+        return multiplicationResults;
+    }
 
     public static JSONArray getMultiplicationResultJSONArray(List<MultiplicationResult> multiplicationResults) {
         JSONArray multiplicationResultsJSONArray = new JSONArray();
