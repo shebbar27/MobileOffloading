@@ -43,6 +43,8 @@ import cse535.group35.mobileoffloading.matrixutil.MatrixUtil;
 import cse535.group35.mobileoffloading.matrixutil.MultiplicationResult;
 
 public class MasterActivity extends AppCompatActivity implements View.OnClickListener {
+    
+    private static final int MIN_BATTERY = 20;
 
     public static Set<ConnectedDevice> connectedDevices = new HashSet<>();
     ArrayList<ConnectedDevice> activeDevices = new ArrayList<>();
@@ -80,7 +82,7 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
             case computeBtn:
                 activeDevices.clear();
                 for(ConnectedDevice d:connectedDevices){
-                    if(d.getDeviceState()!=-1){
+                    if(d.getDeviceState()!=-1  && checkBattery(d)){
                         activeDevices.add(d);
                     }
                 }if (activeDevices.size() == 0){
@@ -284,5 +286,9 @@ public class MasterActivity extends AppCompatActivity implements View.OnClickLis
 
     private void returnToMainActivity() {
         AppUtility.finishAndCloseCurrentActivityWithDefaultAlert(this);
+    }
+
+    private boolean checkBattery(ConnectedDevice e) {
+        return e.getBatteryState() > MIN_BATTERY;
     }
 }
